@@ -1,0 +1,9 @@
+import React from "react";
+
+export default function CreatePage() {
+  return (
+    <div className="flex items-center justify-center min-h-screen">
+      <p className="text-5xl text-center">Create Page</p>
+    </div>
+  );
+}
