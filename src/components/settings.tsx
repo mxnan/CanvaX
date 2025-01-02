@@ -42,9 +42,6 @@ function Settings({ canvas }: SettingsProps) {
       });
 
       //object modified
-      // canvas.on("object:modified", (event: any) => {
-      //   handleObjectSelection(event.target);
-      // });
       canvas.on("object:modified", (event: fabric.IEvent) => {
         const modified = event as fabric.IEvent & { target: FabricObject };
         handleObjectSelection(modified.target);
@@ -83,6 +80,7 @@ function Settings({ canvas }: SettingsProps) {
   };
 
   const clearSettings = () => {
+    setSelectedObject(null); // Clear selected object state
     setWidth("");
     setHeight("");
     setColor("");
