@@ -8,7 +8,7 @@ export default {
   theme: {
   	extend: {
 			fontFamily: {
-        sans: ["Teko", "sans-serif"],
+        sans: ["Space Grotesk", "sans-serif"],
       },
   		borderRadius: {
   			lg: 'var(--radius)',

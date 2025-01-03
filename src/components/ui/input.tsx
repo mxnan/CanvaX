@@ -13,6 +13,11 @@ const Input = React.forwardRef<HTMLInputElement, React.ComponentProps<"input">>(
         )}
         ref={ref}
         {...props}
+        style={{
+          // Hide the spinner controls for number inputs
+          MozAppearance: "textfield",
+          WebkitAppearance: "none",
+        }}
       />
     )
   }

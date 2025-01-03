@@ -158,7 +158,6 @@ function Settings({ canvas }: SettingsProps) {
               <Label htmlFor="width">Width</Label>
               <Input
                 id="width"
-                type="number"
                 value={width}
                 placeholder={width}
                 onChange={handleWidthChange}
@@ -169,7 +168,6 @@ function Settings({ canvas }: SettingsProps) {
               <Label htmlFor="height">Height</Label>
               <Input
                 id="height"
-                type="number"
                 value={height}
                 onChange={handleHeightChange}
                 className="w-16"
@@ -193,7 +191,6 @@ function Settings({ canvas }: SettingsProps) {
               <Label htmlFor="width">Diameter</Label>
               <Input
                 id="width"
-                type="number"
                 value={diameter}
                 onChange={handleDiameterChange}
                 className="w-16"
