@@ -34,21 +34,21 @@ function CanvasSettings({ canvas }: CanvasSettingsProps) {
         <Button
           variant={"secondary"}
           size={"icon"}
-          onClick={() => setCanvasSize("1280", "640")}
+          onClick={() => setCanvasSize("960", "540")}
         >
           <Wallpaper />
         </Button>
         <Button
           size={"icon"}
           variant={"secondary"}
-          onClick={() => setCanvasSize("405", "720")}
+          onClick={() => setCanvasSize("360", "640")}
         >
           <Smartphone />
         </Button>
         <Button
           size={"icon"}
           variant={"secondary"}
-          onClick={() => setCanvasSize("1024", "768")}
+          onClick={() => setCanvasSize("800", "600")}
         >
           <Laptop />
         </Button>
