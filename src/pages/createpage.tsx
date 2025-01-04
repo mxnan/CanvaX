@@ -1,25 +1,19 @@
-import React from "react";
-import { fabric } from "fabric";
-export default function CreatePage() {
-  const canvasRef = React.useRef(null);
-  const [canvas, setCanvas] = React.useState<fabric.Canvas | null>(null);
+import { Canvas } from "@/components/canvas";
+import { Elements } from "@/components/elements";
+import { ObjectControls } from "@/components/object-controls";
 
-  React.useEffect(() => {
-    if (canvasRef.current) {
-      const initCanvas = new fabric.Canvas(canvasRef.current, {
-        width: 320,
-        height: 500,
-      });
-      initCanvas.renderAll();
-      setCanvas(initCanvas);
-      return () => {
-        initCanvas.dispose();
-      };
-    }
-  }, []);
+import { CanvasProvider } from "@/context/canvas-context";
+
+export default function CreatePage() {
   return (
-    <div className="bg-black h-screen flex items-center justify-center">
-      <canvas className="bg-neutral-950 z-[2] static" ref={canvasRef} />
-    </div>
+    <CanvasProvider>
+      <div className="relative bg-neutral-900 text-white overflow-hidden h-screen flex items-center justify-center">
+        <Elements />
+        <div className="relative">
+          <Canvas />
+          <ObjectControls />
+        </div>
+      </div>
+    </CanvasProvider>
   );
 }
