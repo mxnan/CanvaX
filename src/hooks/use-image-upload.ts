@@ -29,7 +29,7 @@ export const useImageUpload = ({ onImageAdd, onClose }: UseImageUploadProps) => 
     }
 
     // Validate file size (5MB)
-    if (file.size > 5 * 1024 * 1024) {
+    if (file.size > 10 * 1024 * 1024) {
       alert('File size should be less than 5MB');
       return;
     }

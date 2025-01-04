@@ -152,6 +152,7 @@ export const CanvasProvider = ({ children }: { children: React.ReactNode }) => {
   );
 };
 
+// eslint-disable-next-line react-refresh/only-export-components
 export const useCanvasContext = () => {
   const context = useContext(CanvasContext);
   if (!context) {

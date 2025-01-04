@@ -11,8 +11,8 @@ export const Canvas = () => {
 
     // Initialize canvas with proper dimensions
     const canvas = new fabric.Canvas(canvasRef.current, {
-      width: window.innerWidth - 48, // Adjust padding as needed
-      height: window.innerHeight - 48,
+      width: window.innerWidth - 32, // Adjust padding as needed
+      height: window.innerHeight - 32,
       preserveObjectStacking: true,
     });
 

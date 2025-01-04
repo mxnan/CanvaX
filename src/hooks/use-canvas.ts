@@ -11,7 +11,7 @@ export const useCanvas = () => {
   const initCanvas = useCallback((canvasElement: HTMLCanvasElement) => {
     const fabricCanvas = new fabric.Canvas(canvasElement, {
       preserveObjectStacking: true,
-      backgroundColor: '#ffffff',
+      // backgroundColor: '#ffffff',
     });
 
     fabricCanvas.on('object:added', (e) => {
@@ -23,11 +23,11 @@ export const useCanvas = () => {
         obj.set({
           id: newId,
           zIndex: newZIndex,
-          borderColor: "#2196F3",
-          cornerColor: "#2196F3",
-          cornerSize: 8,
-          transparentCorners: false,
-          padding: 10,
+          // borderColor: "#2196F3",
+          // cornerColor: "#2196F3",
+          // cornerSize: 8,
+          // transparentCorners: false,
+          // padding: 10,
         });
 
         if (!obj.left || !obj.top) {

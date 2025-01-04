@@ -33,8 +33,8 @@ export const useElements = () => {
         img.set({
           scaleX: scale,
           scaleY: scale,
-          objectType: 'image',
-          id: `image_${Date.now()}`,
+          // objectType: 'image',
+          // id: `image_${Date.now()}`,
         });
 
         canvas.add(img);
@@ -50,11 +50,8 @@ export const useElements = () => {
 
   const handleClearCanvas = useCallback(() => {
     if (!canvas) return;
-
-    if (confirm("Are you sure you want to clear the canvas?")) {
-      canvas.clear();
-      canvas.setBackgroundColor("#ffffff", canvas.renderAll.bind(canvas));
-    }
+    canvas.clear();
+    canvas.renderAll();
   }, [canvas]);
 
   return {
