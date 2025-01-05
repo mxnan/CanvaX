@@ -11,13 +11,6 @@ const getDefaultProps = (canvas: fabric.Canvas) => ({
   left: canvas.width! / 2,
   top: canvas.height! / 2,
   fill: `hsl(${Math.random() * 360}, 70%, 50%)`,
-  // strokeWidth: 2,
-  // stroke: "#000000",
-  // cornerStyle: "circle" as any,
-  // transparentCorners: false,
-  // cornerColor: "#2196F3",
-  // cornerSize: 8,
-  // padding: 10,
   originX: "center",
   originY: "center",
 });
@@ -57,16 +50,6 @@ export const createShape = ({
       });
       break;
 
-    // case 'text':
-    //   shape = new fabric.IText("Double click to edit", {
-    //     ...defaultProps,
-    //     fontSize: 24,
-    //     fill: "#000000",
-    //     fontFamily: "Arial",
-    //     ...options,
-    //   });
-    //   break;
-
     case "star":
       {
         const starPath = createStarPath(5, 25, 50);
@@ -78,12 +61,12 @@ export const createShape = ({
       break;
   }
 
-  // if (shape) {
-  //   shape.set({
-  //     // objectType: type as any,
-  //     // id: `${type}_${Date.now()}`,
-  //   });
-  // }
+  if (shape) {
+    shape.set({
+      objectType: type as any,
+      id: `${type}_${Date.now()}`,
+    });
+  }
 
   return shape;
 };

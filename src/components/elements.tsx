@@ -26,9 +26,11 @@ export const Elements = () => {
             onClick={() => {
               switch (tool.type) {
                 case "shape":
-                case "text":
                   handleShapeAdd(tool.id);
                   break;
+                // case "text":
+                //   handleShapeAdd(tool.id);
+                //   break;
                 case "image":
                   setIsDialogOpen(true);
                   break;

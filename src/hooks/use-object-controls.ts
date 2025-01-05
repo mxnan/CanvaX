@@ -18,6 +18,7 @@ export const useObjectControls = () => {
       if (!selectedObject || !canvas) return;
 
       switch (action) {
+        // Transform group
         case "toggleLock":
           {
             const newLockState = !isLocked;
@@ -37,9 +38,27 @@ export const useObjectControls = () => {
           break;
 
         case "rotate":
-          selectedObject.rotate((selectedObject.angle || 0) - 90);
+          selectedObject.rotate((selectedObject.angle || 0) + 90);
           break;
 
+        // Layer group
+        case "moveForward":
+          moveObjectForward(selectedObject);
+          break;
+
+        case "moveBackward":
+          moveObjectBackward(selectedObject);
+          break;
+
+        case "bringToFront":
+          selectedObject.bringToFront();
+          break;
+
+        case "sendToBack":
+          selectedObject.sendToBack();
+          break;
+
+        // Transform group
         case "flipHorizontal":
           selectedObject.set("flipX", !selectedObject.flipX);
           break;
@@ -48,12 +67,41 @@ export const useObjectControls = () => {
           selectedObject.set("flipY", !selectedObject.flipY);
           break;
 
-        case "moveForward":
-          moveObjectForward(selectedObject);
+        // Style group
+        case "changeFill":
+          // Implement color picker
           break;
 
-        case "moveBackward":
-          moveObjectBackward(selectedObject);
+        // Text group
+        case "editText":
+          if (selectedObject.type === 'text') {
+            // Implement text editing
+          }
+          break;
+
+        case "toggleAlign":
+          if (selectedObject.type === 'text') {
+            // Implement text alignment
+          }
+          break;
+
+        // Image group
+        case "cropImage":
+          if (selectedObject.type === 'image') {
+            // Implement image cropping
+          }
+          break;
+
+        case "resetImage":
+          if (selectedObject.type === 'image') {
+            selectedObject.set({
+              scaleX: 1,
+              scaleY: 1,
+              angle: 0,
+              flipX: false,
+              flipY: false,
+            });
+          }
           break;
 
         case "delete":

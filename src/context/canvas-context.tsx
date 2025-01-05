@@ -1,5 +1,6 @@
 import React, { createContext, useContext, useState, useCallback, useEffect } from 'react';
 import { fabric } from 'fabric';
+import { ControlGroup } from '@/config/controls';
 
 // Type Definitions
 export interface CanvasObject extends fabric.Object {
@@ -35,6 +36,7 @@ export interface Control {
   action: string;
   tooltip: string | ((isLocked: boolean) => string);
   className?: string;
+  group: ControlGroup; // Update to use the new type
 }
 
 export interface ShapeTool {

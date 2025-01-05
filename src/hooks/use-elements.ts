@@ -6,13 +6,16 @@ import { fabric } from "fabric";
 export const useElements = () => {
   const { canvas } = useCanvasContext();
   const [isDialogOpen, setIsDialogOpen] = useState(false);
-
   const handleShapeAdd = useCallback(
     (type: string) => {
       if (!canvas) return;
-
+  
       const shape = createShape({ canvas, type });
       if (shape) {
+        shape.set({
+          objectType: 'shape',
+          id: `shape_${Date.now()}`,
+        });
         canvas.add(shape);
         canvas.setActiveObject(shape);
         canvas.centerObject(shape);
@@ -33,8 +36,8 @@ export const useElements = () => {
         img.set({
           scaleX: scale,
           scaleY: scale,
-          // objectType: 'image',
-          // id: `image_${Date.now()}`,
+          objectType: 'image',
+          id: `image_${Date.now()}`,
         });
 
         canvas.add(img);

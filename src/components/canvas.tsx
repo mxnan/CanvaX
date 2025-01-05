@@ -1,12 +1,12 @@
-import React, { useEffect, useRef } from "react";
+import React from "react";
 import { fabric } from "fabric";
-import { useCanvasContext } from "@/context/canvas-context";
+import { CanvasObject, useCanvasContext } from "@/context/canvas-context";
 
 export const Canvas = () => {
-  const canvasRef = useRef<HTMLCanvasElement>(null);
+  const canvasRef = React.useRef<HTMLCanvasElement>(null);
   const { setCanvas, setSelectedObject } = useCanvasContext();
 
-  useEffect(() => {
+  React.useEffect(() => {
     if (!canvasRef.current) return;
 
     // Initialize canvas with proper dimensions
@@ -15,21 +15,21 @@ export const Canvas = () => {
       height: window.innerHeight - 32,
       preserveObjectStacking: true,
     });
-
-    // Add these event listeners
-    canvas.on('selection:created', (e) => {
-      setSelectedObject(e.selected?.[0] || null);
+    // Set up selection events
+    canvas.on("selection:created", (e) => {
+      const obj = e.selected?.[0] as CanvasObject;
+      setSelectedObject(obj || null);
     });
 
-    canvas.on('selection:updated', (e) => {
-      setSelectedObject(e.selected?.[0] || null);
+    canvas.on("selection:updated", (e) => {
+      const obj = e.selected?.[0] as CanvasObject;
+      setSelectedObject(obj || null);
     });
 
-    canvas.on('selection:cleared', () => {
+    canvas.on("selection:cleared", () => {
       setSelectedObject(null);
     });
 
-    // Set canvas in context
     setCanvas(canvas);
 
     // Cleanup
@@ -41,7 +41,7 @@ export const Canvas = () => {
   return (
     <canvas
       ref={canvasRef}
-      className="bg-neutral-700/20 rounded-lg shadow-xl"
+      className="bg-neutral-900/20 rounded-lg shadow-xl"
     />
   );
 };
