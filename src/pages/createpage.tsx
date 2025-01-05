@@ -1,6 +1,7 @@
-import { Canvas } from "@/components/canvas";
-import { Elements } from "@/components/elements";
-import { ObjectControls } from "@/components/object-controls";
+
+import { Elements } from "@/components/canvas-helper/elements";
+import { ObjectControls } from "@/components/canvas-helper/object-controls";
+import { Canvas } from "@/components/canvas/canvas";
 
 import { CanvasProvider } from "@/context/canvas-context";
 

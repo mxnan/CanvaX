@@ -11,7 +11,7 @@ export const useObjectControls = () => {
     duplicateObject,
   } = useCanvasContext();
 
-  const [isLocked, setIsLocked] = useState(false);
+  const [isLocked, setIsLocked] = useState(false); // state for locking in place
 
   const handleAction = useCallback(
     (action: string) => {
@@ -69,31 +69,31 @@ export const useObjectControls = () => {
 
         // Style group
         case "changeFill":
-          // Implement color picker
+          // selectedObject.set({ fill: fillColor }); // Set the fill color
           break;
 
         // Text group
         case "editText":
-          if (selectedObject.type === 'text') {
+          if (selectedObject.type === "text") {
             // Implement text editing
           }
           break;
 
         case "toggleAlign":
-          if (selectedObject.type === 'text') {
+          if (selectedObject.type === "text") {
             // Implement text alignment
           }
           break;
 
         // Image group
         case "cropImage":
-          if (selectedObject.type === 'image') {
+          if (selectedObject.type === "image") {
             // Implement image cropping
           }
           break;
 
         case "resetImage":
-          if (selectedObject.type === 'image') {
+          if (selectedObject.type === "image") {
             selectedObject.set({
               scaleX: 1,
               scaleY: 1,

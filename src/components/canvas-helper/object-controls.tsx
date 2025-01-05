@@ -1,7 +1,7 @@
 import React from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { getObjectControls } from "@/config/controls";
-import { ControlButton } from "./control-button";
+import { ControlButton } from "@/components/ui-helper/control-button";
 import { useCanvasContext } from "@/context/canvas-context";
 
 export const ObjectControls = () => {

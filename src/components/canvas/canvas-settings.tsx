@@ -1,16 +1,16 @@
-import  { useState, useEffect } from "react";
+import React from "react";
 
-import { Button } from "./ui/button";
 import { Laptop, Smartphone, TabletSmartphone, Wallpaper } from "lucide-react";
+import { Button } from "@/components/ui/button";
 interface CanvasSettingsProps {
   canvas: fabric.Canvas | null;
 }
 
 function CanvasSettings({ canvas }: CanvasSettingsProps) {
-  const [canvasHeight, setCanvasHeight] = useState<number>(500);
-  const [canvasWidth, setCanvasWidth] = useState<number>(500);
+  const [canvasHeight, setCanvasHeight] = React.useState<number>(500);
+  const [canvasWidth, setCanvasWidth] = React.useState<number>(500);
 
-  useEffect(() => {
+  React.useEffect(() => {
     if (canvas) {
       canvas.setWidth(canvasWidth);
       canvas.setHeight(canvasHeight);

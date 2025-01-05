@@ -1,7 +1,7 @@
 import { Button } from "@/components/ui/button";
 import { SHAPE_TOOLS } from "@/config/shapes";
 import { useElements } from "@/hooks/use-elements";
-import { ImageUpload } from "./image-upload";
+import { ImageUpload } from "@/components/canvas-helper/image-upload";
 
 export const Elements = () => {
   const {
