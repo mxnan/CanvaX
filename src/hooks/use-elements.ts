@@ -1,7 +1,8 @@
-import { useCanvasContext } from "@/context/canvas-context";
+import { CanvasObject, useCanvasContext } from "@/context/canvas-context";
 import { createShape } from "@/lib/shapes";
 import { useState, useCallback } from "react";
 import { fabric } from "fabric";
+import { Image } from "fabric/fabric-impl";
 
 export const useElements = () => {
   const { canvas } = useCanvasContext();
@@ -9,13 +10,14 @@ export const useElements = () => {
   const handleShapeAdd = useCallback(
     (type: string) => {
       if (!canvas) return;
-  
+
       const shape = createShape({ canvas, type });
       if (shape) {
         shape.set({
-          objectType: 'shape',
-          id: `shape_${Date.now()}`,
-        });
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
+          objectType: "shape" as any, // Use 'as any' to bypass the type checking
+          id: `${type}_${Date.now()}`,
+        } as Partial<CanvasObject>); // Assert this as Partial<CanvasObject>
         canvas.add(shape);
         canvas.setActiveObject(shape);
         canvas.centerObject(shape);
@@ -36,9 +38,9 @@ export const useElements = () => {
         img.set({
           scaleX: scale,
           scaleY: scale,
-          objectType: 'image',
+          objectType: "image",
           id: `image_${Date.now()}`,
-        });
+        }as Partial<Image>);
 
         canvas.add(img);
         canvas.centerObject(img);
