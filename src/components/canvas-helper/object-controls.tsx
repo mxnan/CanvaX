@@ -6,6 +6,7 @@ import { useCanvasContext } from "@/context/canvas-context";
 
 export const ObjectControls = () => {
   const {
+    canvas,
     selectedObject,
     position,
     isLocked,
@@ -24,6 +25,7 @@ export const ObjectControls = () => {
     if (!selectedObject) return;
 
     const objectType = selectedObject.objectType || "shape";
+    console.log(objectType);
 
     // Handle shared controls
     switch (action) {
@@ -33,11 +35,20 @@ export const ObjectControls = () => {
       case "duplicate":
         duplicateObject(selectedObject);
         break;
+      case "rotate":
+        selectedObject.rotate!((selectedObject.angle || 0) + 90);
+        break;
       case "moveForward":
         moveObjectForward(selectedObject);
         break;
       case "moveBackward":
         moveObjectBackward(selectedObject);
+        break;
+      case "flipHorizontal":
+        selectedObject.set("flipX", !selectedObject.flipX);
+        break;
+      case "flipVertical":
+        selectedObject.set("flipY", !selectedObject.flipY);
         break;
       case "delete":
         deleteObject(selectedObject);
@@ -47,15 +58,6 @@ export const ObjectControls = () => {
     // Handle type-specific controls
     if (objectType === "shape") {
       switch (action) {
-        case "rotate":
-          selectedObject.rotate!((selectedObject.angle || 0) + 90);
-          break;
-        case "flipHorizontal":
-          selectedObject.set("flipX", !selectedObject.flipX);
-          break;
-        case "flipVertical":
-          selectedObject.set("flipY", !selectedObject.flipY);
-          break;
         case "changeFill":
           // Implement color picker
           break;
@@ -65,6 +67,7 @@ export const ObjectControls = () => {
         case "cropImage":
           // Implement image cropping
           break;
+
         case "resetImage":
           selectedObject.set({
             scaleX: 1,
@@ -84,6 +87,11 @@ export const ObjectControls = () => {
           // Implement text alignment
           break;
       }
+    }
+    if (canvas) {
+      canvas.renderAll();
+    } else {
+      console.warn("Canvas is not available for rendering.");
     }
   };
 

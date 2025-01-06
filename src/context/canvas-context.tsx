@@ -1,6 +1,12 @@
-import React, { createContext, useContext, useState, useCallback, useEffect } from 'react';
-import { fabric } from 'fabric';
-import { ControlGroup } from '@/config/controls';
+import React, {
+  createContext,
+  useContext,
+  useState,
+  useCallback,
+  useEffect,
+} from "react";
+import { fabric } from "fabric";
+import { ControlGroup } from "@/config/controls";
 
 // Type Definitions
 export interface CanvasObject extends fabric.Object {
@@ -43,7 +49,7 @@ export interface ShapeTool {
   id: string;
   icon: React.ElementType;
   tooltip: string;
-  type: 'shape' | 'text' | 'image' | 'action';
+  type: "shape" | "text" | "image" | "action";
 }
 
 // Context Creation and Provider
@@ -51,7 +57,9 @@ const CanvasContext = createContext<CanvasContextType | null>(null);
 
 export const CanvasProvider = ({ children }: { children: React.ReactNode }) => {
   const [canvas, setCanvas] = useState<fabric.Canvas | null>(null);
-  const [selectedObject, setSelectedObject] = useState<CanvasObject | null>(null);
+  const [selectedObject, setSelectedObject] = useState<CanvasObject | null>(
+    null
+  );
   const [position, setPosition] = useState<Position>({ top: 0, left: 0 });
   const [isLocked, setIsLocked] = useState(false);
 
@@ -74,55 +82,69 @@ export const CanvasProvider = ({ children }: { children: React.ReactNode }) => {
     updateControlsPosition();
 
     // Add event listeners for object modifications
-    canvas.on('object:moving', updateControlsPosition);
-    canvas.on('object:scaling', updateControlsPosition);
-    canvas.on('object:rotating', updateControlsPosition);
-    canvas.on('mouse:wheel', updateControlsPosition);
+    canvas.on("object:moving", updateControlsPosition);
+    // canvas.on("object:scaling", updateControlsPosition);
+    // canvas.on("object:rotating", updateControlsPosition);
+    // canvas.on('mouse:wheel', updateControlsPosition);
 
     return () => {
-      canvas.off('object:moving', updateControlsPosition);
-      canvas.off('object:scaling', updateControlsPosition);
-      canvas.off('object:rotating', updateControlsPosition);
-      canvas.off('mouse:wheel', updateControlsPosition);
+      canvas.off("object:moving", updateControlsPosition);
+      // canvas.off("object:scaling", updateControlsPosition);
+      // canvas.off("object:rotating", updateControlsPosition);
+      // canvas.off('mouse:wheel', updateControlsPosition);
     };
   }, [canvas, selectedObject]);
 
-  const moveObjectForward = useCallback((obj: CanvasObject) => {
-    if (!canvas) return;
-    obj.bringForward();
-    canvas.renderAll();
-  }, [canvas]);
-
-  const moveObjectBackward = useCallback((obj: CanvasObject) => {
-    if (!canvas) return;
-    obj.sendBackwards();
-    canvas.renderAll();
-  }, [canvas]);
-
-  const deleteObject = useCallback((obj: CanvasObject) => {
-    if (!canvas) return;
-    canvas.remove(obj);
-    setSelectedObject(null);
-  }, [canvas]);
-
-  const duplicateObject = useCallback((obj: CanvasObject) => {
-    if (!canvas) return;
-    obj.clone((cloned: fabric.Object) => {
-      const newObj = cloned as CanvasObject;
-      newObj.set({
-        left: obj.left! + 20,
-        top: obj.top! + 20,
-        id: `object_${Date.now()}`,
-      });
-      canvas.add(newObj);
-      canvas.setActiveObject(newObj);
+  const moveObjectForward = useCallback(
+    (obj: CanvasObject) => {
+      if (!canvas) return;
+      obj.bringForward();
       canvas.renderAll();
-    });
-  }, [canvas]);
+    },
+    [canvas]
+  );
+
+  const moveObjectBackward = useCallback(
+    (obj: CanvasObject) => {
+      if (!canvas) return;
+      obj.sendBackwards();
+      canvas.renderAll();
+    },
+    [canvas]
+  );
+
+  const deleteObject = useCallback(
+    (obj: CanvasObject) => {
+      if (!canvas) return;
+      canvas.remove(obj);
+      setSelectedObject(null);
+    },
+    [canvas]
+  );
+
+  const duplicateObject = useCallback(
+    (obj: CanvasObject) => {
+      if (!canvas) return;
+      obj.clone((cloned: fabric.Object) => {
+        const newObj = cloned as CanvasObject;
+        newObj.set({
+          left: obj.left! + 20,
+          top: obj.top! + 20,
+          id: `object_${Date.now()}`,
+          objectType: obj.objectType, // New code
+        });
+
+        canvas.add(newObj);
+        canvas.setActiveObject(newObj);
+        canvas.renderAll();
+      });
+    },
+    [canvas]
+  );
 
   const toggleLock = useCallback(() => {
     if (!selectedObject) return;
-    
+
     const newLockState = !isLocked;
     selectedObject.set({
       lockMovementX: newLockState,
@@ -136,19 +158,21 @@ export const CanvasProvider = ({ children }: { children: React.ReactNode }) => {
   }, [canvas, selectedObject, isLocked]);
 
   return (
-    <CanvasContext.Provider value={{
-      canvas,
-      selectedObject,
-      position,
-      isLocked,
-      setCanvas,
-      setSelectedObject,
-      moveObjectForward,
-      moveObjectBackward,
-      deleteObject,
-      duplicateObject,
-      toggleLock,
-    }}>
+    <CanvasContext.Provider
+      value={{
+        canvas,
+        selectedObject,
+        position,
+        isLocked,
+        setCanvas,
+        setSelectedObject,
+        moveObjectForward,
+        moveObjectBackward,
+        deleteObject,
+        duplicateObject,
+        toggleLock,
+      }}
+    >
       {children}
     </CanvasContext.Provider>
   );
@@ -158,7 +182,7 @@ export const CanvasProvider = ({ children }: { children: React.ReactNode }) => {
 export const useCanvasContext = () => {
   const context = useContext(CanvasContext);
   if (!context) {
-    throw new Error('useCanvasContext must be used within a CanvasProvider');
+    throw new Error("useCanvasContext must be used within a CanvasProvider");
   }
   return context;
 };

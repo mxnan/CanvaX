@@ -35,6 +35,7 @@ export const ControlButton = ({
         "h-8 w-8 relative group hover:bg-neutral-800",
         control.className
       )}
+     
       onClick={onClick}
     >
       {Icon && <Icon size={16} />}

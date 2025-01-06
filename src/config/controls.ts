@@ -33,6 +33,27 @@ export const sharedControls: Control[] = [
     group: "transform",
   },
   {
+    id: "rotate",
+    icon: RotateCcw,
+    action: "rotate",
+    tooltip: "Rotate 90°",
+    group: "transform",
+  },
+  {
+    id: "flipH",
+    icon: FlipHorizontal,
+    action: "flipHorizontal",
+    tooltip: "Flip Horizontal",
+    group: "transform",
+  },
+  {
+    id: "flipV",
+    icon: FlipVertical,
+    action: "flipVertical",
+    tooltip: "Flip Vertical",
+    group: "transform",
+  },
+  {
     id: "layer-up",
     icon: ArrowUp,
     action: "moveForward",
@@ -56,33 +77,13 @@ export const sharedControls: Control[] = [
   },
 ];
 
-// Transform controls (only for shapes and images)
-export const transformControls: Control[] = [
-  {
-    id: "rotate",
-    icon: RotateCcw,
-    action: "rotate",
-    tooltip: "Rotate 90°",
-    group: "transform",
-  },
-];
+// // Transform controls (only for shapes and images)
+// export const transformControls: Control[] = [
+
+// ];
 
 // Shape-specific controls
 export const shapeControls: Control[] = [
-  {
-    id: "flipH",
-    icon: FlipHorizontal,
-    action: "flipHorizontal",
-    tooltip: "Flip Horizontal",
-    group: "transform",
-  },
-  {
-    id: "flipV",
-    icon: FlipVertical,
-    action: "flipVertical",
-    tooltip: "Flip Vertical",
-    group: "transform",
-  },
   {
     id: "fill",
     icon: Palette,
@@ -128,7 +129,6 @@ export const imageControls: Control[] = [
   },
 ];
 
-// Function to get controls based on object type
 export const getObjectControls = (objectType: string): Control[] => {
   // Start with shared controls for all objects
   const controls = [...sharedControls];
@@ -138,9 +138,9 @@ export const getObjectControls = (objectType: string): Control[] => {
     case "text":
       return [...controls, ...textControls];
     case "image":
-      return [...controls, ...transformControls, ...imageControls];
+      return [...controls, ...imageControls];
     case "shape":
-      return [...controls, ...transformControls, ...shapeControls];
+      return [...controls, ...shapeControls];
     default:
       return controls;
   }

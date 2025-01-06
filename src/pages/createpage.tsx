@@ -1,5 +1,5 @@
 
-import { Elements } from "@/components/canvas-helper/elements";
+import { Elements } from "@/components/elements/elements";
 import { ObjectControls } from "@/components/canvas-helper/object-controls";
 import { Canvas } from "@/components/canvas/canvas";
 
