@@ -9,12 +9,10 @@ export const ObjectControls = () => {
     canvas,
     selectedObject,
     position,
-    isLocked,
     moveObjectForward,
     moveObjectBackward,
     deleteObject,
     duplicateObject,
-    toggleLock,
   } = useCanvasContext();
 
   if (!selectedObject) return null;
@@ -29,9 +27,6 @@ export const ObjectControls = () => {
 
     // Handle shared controls
     switch (action) {
-      case "toggleLock":
-        toggleLock();
-        break;
       case "duplicate":
         duplicateObject(selectedObject);
         break;
@@ -127,7 +122,6 @@ export const ObjectControls = () => {
                   <ControlButton
                     key={control.id}
                     control={control}
-                    isLocked={isLocked}
                     onClick={() => handleAction(control.action)}
                   />
                 ))}

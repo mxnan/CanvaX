@@ -1,5 +1,5 @@
 import { useCanvasContext } from "@/context/canvas-context";
-import { useCallback, useState } from "react";
+import { useCallback } from "react";
 
 export const useObjectControls = () => {
   const {
@@ -11,28 +11,12 @@ export const useObjectControls = () => {
     duplicateObject,
   } = useCanvasContext();
 
-  const [isLocked, setIsLocked] = useState(false); // state for locking in place
-
   const handleAction = useCallback(
     (action: string) => {
       if (!selectedObject || !canvas) return;
 
       switch (action) {
         // Transform group
-        case "toggleLock":
-          {
-            const newLockState = !isLocked;
-            selectedObject.set({
-              lockMovementX: newLockState,
-              lockMovementY: newLockState,
-              lockRotation: newLockState,
-              lockScalingX: newLockState,
-              lockScalingY: newLockState,
-            });
-            setIsLocked(newLockState);
-          }
-          break;
-
         case "duplicate":
           duplicateObject(selectedObject);
           break;
@@ -114,7 +98,6 @@ export const useObjectControls = () => {
     [
       canvas,
       selectedObject,
-      isLocked,
       moveObjectForward,
       moveObjectBackward,
       deleteObject,
@@ -124,7 +107,6 @@ export const useObjectControls = () => {
 
   return {
     selectedObject,
-    isLocked,
     handleAction,
   };
 };

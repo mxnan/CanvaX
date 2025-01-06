@@ -1,6 +1,4 @@
 import {
-  Lock,
-  Unlock,
   Copy,
   RotateCcw,
   FlipHorizontal,
@@ -18,13 +16,6 @@ import { Control } from "@/context/canvas-context";
 
 // Shared controls that apply to all objects
 export const sharedControls: Control[] = [
-  {
-    id: "lock",
-    getDynamicIcon: (isLocked: boolean) => (isLocked ? Unlock : Lock),
-    action: "toggleLock",
-    tooltip: (isLocked: boolean) => (isLocked ? "Unlock" : "Lock"),
-    group: "transform",
-  },
   {
     id: "duplicate",
     icon: Copy,

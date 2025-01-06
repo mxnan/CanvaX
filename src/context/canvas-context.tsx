@@ -24,25 +24,22 @@ export interface CanvasContextType {
   canvas: fabric.Canvas | null;
   selectedObject: CanvasObject | null;
   position: Position;
-  isLocked: boolean;
   setCanvas: (canvas: fabric.Canvas | null) => void;
   setSelectedObject: (object: CanvasObject | null) => void;
   moveObjectForward: (obj: CanvasObject) => void;
   moveObjectBackward: (obj: CanvasObject) => void;
   deleteObject: (obj: CanvasObject) => void;
   duplicateObject: (obj: CanvasObject) => void;
-  toggleLock: () => void;
 }
 
 // Control Type Definitions
 export interface Control {
   id: string;
   icon?: React.ElementType;
-  getDynamicIcon?: (isLocked: boolean) => React.ElementType;
   action: string;
-  tooltip: string | ((isLocked: boolean) => string);
+  tooltip: string;
   className?: string;
-  group: ControlGroup; // Update to use the new type
+  group: ControlGroup;
 }
 
 export interface ShapeTool {
@@ -61,7 +58,6 @@ export const CanvasProvider = ({ children }: { children: React.ReactNode }) => {
     null
   );
   const [position, setPosition] = useState<Position>({ top: 0, left: 0 });
-  const [isLocked, setIsLocked] = useState(false);
 
   // Update position when selected object changes or moves
   useEffect(() => {
@@ -131,7 +127,7 @@ export const CanvasProvider = ({ children }: { children: React.ReactNode }) => {
           left: obj.left! + 20,
           top: obj.top! + 20,
           id: `object_${Date.now()}`,
-          objectType: obj.objectType, // New code
+          objectType: obj.objectType,
         });
 
         canvas.add(newObj);
@@ -142,20 +138,6 @@ export const CanvasProvider = ({ children }: { children: React.ReactNode }) => {
     [canvas]
   );
 
-  const toggleLock = useCallback(() => {
-    if (!selectedObject) return;
-
-    const newLockState = !isLocked;
-    selectedObject.set({
-      lockMovementX: newLockState,
-      lockMovementY: newLockState,
-      lockRotation: newLockState,
-      lockScalingX: newLockState,
-      lockScalingY: newLockState,
-    });
-    setIsLocked(newLockState);
-    canvas?.renderAll();
-  }, [canvas, selectedObject, isLocked]);
 
   return (
     <CanvasContext.Provider
@@ -163,14 +145,12 @@ export const CanvasProvider = ({ children }: { children: React.ReactNode }) => {
         canvas,
         selectedObject,
         position,
-        isLocked,
         setCanvas,
         setSelectedObject,
         moveObjectForward,
         moveObjectBackward,
         deleteObject,
         duplicateObject,
-        toggleLock,
       }}
     >
       {children}
