@@ -23,11 +23,6 @@ export const useCanvas = () => {
         obj.set({
           id: newId,
           zIndex: newZIndex,
-          // borderColor: "#2196F3",
-          // cornerColor: "#2196F3",
-          // cornerSize: 8,
-          // transparentCorners: false,
-          // padding: 10,
         });
 
         if (!obj.left || !obj.top) {

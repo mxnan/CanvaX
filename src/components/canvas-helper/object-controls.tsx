@@ -3,8 +3,8 @@ import { motion, AnimatePresence } from "framer-motion";
 import { getObjectControls } from "@/config/controls";
 import { ControlButton } from "@/components/ui-helper/control-button";
 import { useCanvasContext } from "@/context/canvas-context";
-
-export const ObjectControls = () => {
+ 
+const ObjectControls = () => {
   const {
     canvas,
     selectedObject,
@@ -136,3 +136,5 @@ export const ObjectControls = () => {
     </AnimatePresence>
   );
 };
+
+export default ObjectControls;

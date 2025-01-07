@@ -6,7 +6,7 @@ import { ImageUpload } from "@/components/canvas-helper/image-upload";
 import { Image, Trash2 } from "lucide-react";
 import { ShapesPopover } from "./shapes-popover";
 
-export const Elements = () => {
+const Elements = () => {
   const {
     handleShapeAdd,
     handleImageAdd,
@@ -64,3 +64,5 @@ export const Elements = () => {
     </div>
   );
 };
+
+export default Elements;

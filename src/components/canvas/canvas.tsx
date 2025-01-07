@@ -2,7 +2,7 @@ import React from "react";
 import { fabric } from "fabric";
 import { CanvasObject, useCanvasContext } from "@/context/canvas-context";
 
-export const Canvas = () => {
+const Canvas = () => {
   const canvasRef = React.useRef<HTMLCanvasElement>(null);
   const { setCanvas, setSelectedObject } = useCanvasContext();
 
@@ -45,3 +45,5 @@ export const Canvas = () => {
     />
   );
 };
+
+export default Canvas;
