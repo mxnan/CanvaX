@@ -1,21 +1,21 @@
 import React from "react";
 import { fabric } from "fabric";
-import { CanvasObject, useCanvasContext } from "@/context/canvas-context";
+import { CanvasObject } from "@/context/canvas-context";
+import { useStore } from "@/store";
 
 const Canvas = () => {
   const canvasRef = React.useRef<HTMLCanvasElement>(null);
-  const { setCanvas, setSelectedObject } = useCanvasContext();
+  const { setCanvas, setSelectedObject } = useStore();
 
   React.useEffect(() => {
     if (!canvasRef.current) return;
 
-    // Initialize canvas with proper dimensions
     const canvas = new fabric.Canvas(canvasRef.current, {
-      width: window.innerWidth - 32, // Adjust padding as needed
+      width: window.innerWidth - 32,
       height: window.innerHeight - 32,
       preserveObjectStacking: true,
     });
-    // Set up selection events
+
     canvas.on("selection:created", (e) => {
       const obj = e.selected?.[0] as CanvasObject;
       setSelectedObject(obj || null);
@@ -32,7 +32,6 @@ const Canvas = () => {
 
     setCanvas(canvas);
 
-    // Cleanup
     return () => {
       canvas.dispose();
     };

@@ -2,92 +2,22 @@ import React from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { getObjectControls } from "@/config/controls";
 import { ControlButton } from "@/components/ui-helper/control-button";
-import { useCanvasContext } from "@/context/canvas-context";
- 
+import { useStore } from "@/store";
+
 const ObjectControls = () => {
   const {
-    canvas,
     selectedObject,
     position,
-    moveObjectForward,
-    moveObjectBackward,
-    deleteObject,
-    duplicateObject,
-  } = useCanvasContext();
+    handleObjectAction
+  } = useStore();
 
   if (!selectedObject) return null;
 
   const controls = getObjectControls(selectedObject.objectType || "shape");
+  console.log(selectedObject.type)
 
   const handleAction = (action: string) => {
-    if (!selectedObject) return;
-
-    const objectType = selectedObject.objectType || "shape";
-    console.log(objectType);
-
-    // Handle shared controls
-    switch (action) {
-      case "duplicate":
-        duplicateObject(selectedObject);
-        break;
-      case "rotate":
-        selectedObject.rotate!((selectedObject.angle || 0) + 90);
-        break;
-      case "moveForward":
-        moveObjectForward(selectedObject);
-        break;
-      case "moveBackward":
-        moveObjectBackward(selectedObject);
-        break;
-      case "flipHorizontal":
-        selectedObject.set("flipX", !selectedObject.flipX);
-        break;
-      case "flipVertical":
-        selectedObject.set("flipY", !selectedObject.flipY);
-        break;
-      case "delete":
-        deleteObject(selectedObject);
-        break;
-    }
-
-    // Handle type-specific controls
-    if (objectType === "shape") {
-      switch (action) {
-        case "changeFill":
-          // Implement color picker
-          break;
-      }
-    } else if (objectType === "image") {
-      switch (action) {
-        case "cropImage":
-          // Implement image cropping
-          break;
-
-        case "resetImage":
-          selectedObject.set({
-            scaleX: 1,
-            scaleY: 1,
-            angle: 0,
-            flipX: false,
-            flipY: false,
-          });
-          break;
-      }
-    } else if (objectType === "text") {
-      switch (action) {
-        case "editText":
-          // Implement text editing
-          break;
-        case "toggleAlign":
-          // Implement text alignment
-          break;
-      }
-    }
-    if (canvas) {
-      canvas.renderAll();
-    } else {
-      console.warn("Canvas is not available for rendering.");
-    }
+    handleObjectAction(action, selectedObject);
   };
 
   // Group controls by their group property
@@ -111,10 +41,7 @@ const ObjectControls = () => {
           left: position.left,
         }}
       >
-        <div
-          className="flex gap-1 bg-neutral-900/90 backdrop-blur-sm rounded-lg p-1.5 
-                       shadow-lg border border-neutral-800"
-        >
+        <div className="flex gap-1 bg-neutral-900/90 backdrop-blur-sm rounded-lg p-1.5 shadow-lg border border-neutral-800">
           {Object.entries(groupedControls).map(([group, groupControls]) => (
             <React.Fragment key={group}>
               <div className="flex gap-1">
