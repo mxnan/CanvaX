@@ -116,18 +116,6 @@ export const createCanvasSlice: StateCreator<CanvasSlice> = (set, get) => ({
 
   setSelectedObject: (object) => {
     set({ selectedObject: object });
-    if (object && get().canvas) {
-      const zoom = get().canvas!.getZoom();
-      const bounds = object.getBoundingRect();
-      const offset = get().canvas!.getElement().getBoundingClientRect();
-
-      set({
-        position: {
-          top: bounds.top * zoom + offset.top,
-          left: bounds.left * zoom + offset.left,
-        },
-      });
-    }
   },
 
   // updatePosition: (position) => {

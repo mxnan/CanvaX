@@ -14,6 +14,8 @@ const Canvas = () => {
       width: window.innerWidth - 32,
       height: window.innerHeight - 32,
       preserveObjectStacking: true,
+      // Disable multi-selection/grouping
+      selection: false,         // Disables group selection
     });
 
     const updateSelectedObject = () => {
@@ -23,20 +25,38 @@ const Canvas = () => {
       }
     };
 
-    canvas.on("selection:created", updateSelectedObject);
-    canvas.on("selection:updated", updateSelectedObject);
-    canvas.on("selection:cleared", () => setSelectedObject(null));
-    
-    // Add these event listeners
-    canvas.on("object:moving", updateSelectedObject);
-    canvas.on("object:scaling", updateSelectedObject);
-    canvas.on("object:rotating", updateSelectedObject);
-    canvas.on("mouse:wheel", updateSelectedObject);
+    // Define all events to listen to
+    const events = [
+      { name: "selection:created", handler: updateSelectedObject },
+      { name: "selection:updated", handler: updateSelectedObject },
+      { name: "selection:cleared", handler: () => setSelectedObject(null) },
+      { name: "object:moving", handler: updateSelectedObject },
+      { name: "object:scaling", handler: updateSelectedObject },
+      { name: "object:rotating", handler: updateSelectedObject },
+      { name: "mouse:wheel", handler: updateSelectedObject },
+    ] as const;
 
+    // Add all event listeners
+    events.forEach(({ name, handler }) => {
+      canvas.on(name, handler);
+    });
+
+    // Set canvas in store
     setCanvas(canvas);
 
+    // Cleanup function
     return () => {
+      // Remove all event listeners
+      events.forEach(({ name, handler }) => {
+        canvas.off(name, handler);
+      });
+      
+      // Dispose of canvas
       canvas.dispose();
+      
+      // Clear canvas from store
+      setCanvas(null);
+      setSelectedObject(null);
     };
   }, [setCanvas, setSelectedObject]);
 

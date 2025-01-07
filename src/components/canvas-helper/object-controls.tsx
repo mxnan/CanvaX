@@ -19,7 +19,7 @@ const ObjectControls = () => {
 
       setPosition({
         top: Math.max(0, bounds.top * zoom + offset.top - 100),
-        left: bounds.left * zoom + offset.left,
+        left: Math.max(0, bounds.left * zoom + offset.left - 100),
       });
     };
 
@@ -28,13 +28,13 @@ const ObjectControls = () => {
     canvas.on("object:moving", updatePosition);
     canvas.on("object:scaling", updatePosition);
     canvas.on("object:rotating", updatePosition);
-    canvas.on("mouse:wheel", updatePosition);
+    // canvas.on("mouse:wheel", updatePosition);
 
     return () => {
       canvas.off("object:moving", updatePosition);
       canvas.off("object:scaling", updatePosition);
       canvas.off("object:rotating", updatePosition);
-      canvas.off("mouse:wheel", updatePosition);
+      // canvas.off("mouse:wheel", updatePosition);
     };
   }, [selectedObject, canvas]);
 
@@ -79,9 +79,9 @@ const ObjectControls = () => {
                   />
                 ))}
               </div>
-              {/* {group !== "delete" && (
+              {group !== "delete" && (
                 <div className="w-px h-full bg-neutral-800" />
-              )} */}
+              )}
             </React.Fragment>
           ))}
         </div>
