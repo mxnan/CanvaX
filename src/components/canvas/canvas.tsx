@@ -1,7 +1,7 @@
 import React from "react";
 import { fabric } from "fabric";
-import { CanvasObject } from "@/context/canvas-context";
 import { useStore } from "@/store";
+import { CanvasObject } from "@/store/slices/canvas-slice";
 
 const Canvas = () => {
   const canvasRef = React.useRef<HTMLCanvasElement>(null);
@@ -16,19 +16,22 @@ const Canvas = () => {
       preserveObjectStacking: true,
     });
 
-    canvas.on("selection:created", (e) => {
-      const obj = e.selected?.[0] as CanvasObject;
-      setSelectedObject(obj || null);
-    });
+    const updateSelectedObject = () => {
+      const activeObject = canvas.getActiveObject() as CanvasObject;
+      if (activeObject) {
+        setSelectedObject(activeObject);
+      }
+    };
 
-    canvas.on("selection:updated", (e) => {
-      const obj = e.selected?.[0] as CanvasObject;
-      setSelectedObject(obj || null);
-    });
-
-    canvas.on("selection:cleared", () => {
-      setSelectedObject(null);
-    });
+    canvas.on("selection:created", updateSelectedObject);
+    canvas.on("selection:updated", updateSelectedObject);
+    canvas.on("selection:cleared", () => setSelectedObject(null));
+    
+    // Add these event listeners
+    canvas.on("object:moving", updateSelectedObject);
+    canvas.on("object:scaling", updateSelectedObject);
+    canvas.on("object:rotating", updateSelectedObject);
+    canvas.on("mouse:wheel", updateSelectedObject);
 
     setCanvas(canvas);
 

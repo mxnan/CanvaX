@@ -1,10 +1,37 @@
 import { StateCreator } from "zustand";
 import { fabric } from "fabric";
-import { CanvasObject, Position } from "@/context/canvas-context";
 import { createShape } from "@/lib/shapes";
 import { Image } from "fabric/fabric-impl";
 
+// Move types from context to types folder
+export interface Control {
+  id: string;
+  icon?: React.ElementType;
+  action: string;
+  tooltip: string;
+  className?: string;
+  group: string;
+}
+// Type Definitions
+export interface CanvasObject extends fabric.Object {
+  id?: string;
+  zIndex?: number;
+  objectType?: string;
+}
+
+export interface Position {
+  top: number;
+  left: number;
+}
+export interface ShapeTool {
+  id: string;
+  icon: React.ElementType;
+  tooltip: string;
+  type: "shape" | "text" | "image" | "action";
+}
+
 export interface CanvasSlice {
+  // State
   canvas: fabric.Canvas | null;
   selectedObject: CanvasObject | null;
   position: Position;
@@ -14,14 +41,16 @@ export interface CanvasSlice {
   // Canvas actions
   setCanvas: (canvas: fabric.Canvas | null) => void;
   setSelectedObject: (object: CanvasObject | null) => void;
-  updatePosition: (position: Position) => void;
   incrementObjectCount: () => void;
+  initializeCanvas: (canvasElement: HTMLCanvasElement) => fabric.Canvas;
 
   // Object actions
   moveObjectForward: (obj: CanvasObject) => void;
   moveObjectBackward: (obj: CanvasObject) => void;
   deleteObject: (obj: CanvasObject) => void;
   duplicateObject: (obj: CanvasObject) => void;
+  bringToFront: (obj: CanvasObject) => void;
+  sendToBack: (obj: CanvasObject) => void;
 
   // Element actions
   addShape: (type: string) => void;
@@ -35,14 +64,53 @@ export interface CanvasSlice {
   flipObject: (object: CanvasObject, direction: 'horizontal' | 'vertical') => void;
   resetObjectTransform: (object: CanvasObject) => void;
   updateObjectProperties: (object: CanvasObject, properties: Partial<CanvasObject>) => void;
+
+
+  // // Add text-specific actions
+  // handleTextEdit: (obj: CanvasObject) => void;
+  // handleTextAlign: (obj: CanvasObject, alignment: string) => void;
+
+  // // Add image-specific actions
+  // handleImageCrop: (obj: CanvasObject) => void;
 }
 
 export const createCanvasSlice: StateCreator<CanvasSlice> = (set, get) => ({
+  // Initial state
   canvas: null,
   selectedObject: null,
   position: { top: 0, left: 0 },
   objectCount: 0,
   isDialogOpen: false,
+
+  // Initialize canvas
+  initializeCanvas: (canvasElement) => {
+    const fabricCanvas = new fabric.Canvas(canvasElement, {
+      width: window.innerWidth - 32,
+      height: window.innerHeight - 32,
+      preserveObjectStacking: true,
+    });
+
+    fabricCanvas.on('object:added', (e) => {
+      const obj = e.target as CanvasObject;
+      if (obj) {
+        const newId = `object_${Date.now()}_${get().objectCount}`;
+        obj.set({
+          id: newId,
+          zIndex: get().objectCount + 1,
+        });
+
+        if (!obj.left || !obj.top) {
+          fabricCanvas.centerObject(obj);
+        }
+
+        get().incrementObjectCount();
+        fabricCanvas.renderAll();
+      }
+    });
+
+    set({ canvas: fabricCanvas });
+    return fabricCanvas;
+  },
 
   setCanvas: (canvas) => set({ canvas }),
 
@@ -62,7 +130,16 @@ export const createCanvasSlice: StateCreator<CanvasSlice> = (set, get) => ({
     }
   },
 
-  updatePosition: (position) => set({ position }),
+  // updatePosition: (position) => {
+  //   const currentPosition = get().position;
+  //   // Only update if position actually changed
+  //   if (
+  //     currentPosition.top !== position.top || 
+  //     currentPosition.left !== position.left
+  //   ) {
+  //     set({ position });
+  //   }
+  // },
 
   incrementObjectCount: () =>
     set((state) => ({
@@ -233,4 +310,33 @@ export const createCanvasSlice: StateCreator<CanvasSlice> = (set, get) => ({
     object.set(properties);
     get().canvas?.renderAll();
   },
+
+  // Add new actions from context
+  bringToFront: (obj) => {
+    obj.bringToFront();
+    get().canvas?.renderAll();
+  },
+
+  sendToBack: (obj) => {
+    obj.sendToBack();
+    get().canvas?.renderAll();
+  },
+
+  // // Add text-specific actions
+  // handleTextEdit: (obj: CanvasObject) => {
+  //   if (obj.type !== 'text') return;
+  //   // Implement text editing logic
+  // },
+
+  // handleTextAlign: (obj: CanvasObject, alignment: string) => {
+  //   if (obj.type !== 'text') return;
+  //   obj.set('textAlign', alignment);
+  //   get().canvas?.renderAll();
+  // },
+
+  // // Add image-specific actions
+  // handleImageCrop: (obj: CanvasObject) => {
+  //   if (obj.type !== 'image') return;
+  //   // Implement image cropping logic
+  // },
 });

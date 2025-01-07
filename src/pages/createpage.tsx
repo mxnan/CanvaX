@@ -1,5 +1,4 @@
 import { lazy, Suspense } from "react";
-import { CanvasProvider } from "@/context/canvas-context";
 
 // Lazy load components
 const Elements = lazy(() => import("@/components/elements/elements"));
@@ -16,16 +15,14 @@ const LoadingFallback = () => (
 
 export default function CreatePage() {
   return (
-    <CanvasProvider>
-      <div className="relative bg-neutral-900 text-white overflow-hidden h-screen flex items-center justify-center">
-        <Suspense fallback={<LoadingFallback />}>
-          <Elements />
-          <div className="relative">
-            <Canvas />
-            <ObjectControls />
-          </div>
-        </Suspense>
-      </div>
-    </CanvasProvider>
+    <div className="relative bg-neutral-900 text-white overflow-hidden h-screen flex items-center justify-center">
+      <Suspense fallback={<LoadingFallback />}>
+        <Elements />
+        <div className="relative">
+          <Canvas />
+          <ObjectControls />
+        </div>
+      </Suspense>
+    </div>
   );
 }
