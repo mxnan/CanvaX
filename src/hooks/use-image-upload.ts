@@ -1,4 +1,5 @@
 import { useState, useRef, useCallback } from "react";
+import { toast } from "sonner";
 
 interface UseImageUploadProps {
   onImageAdd: (url: string) => void;
@@ -36,13 +37,13 @@ export const useImageUpload = ({
   const handleFile = useCallback((file: File) => {
     // Validate file type
     if (!file.type.startsWith("image/")) {
-      alert("Please upload an image file");
+      toast.error("Please upload an image file");
       return;
     }
 
     // Validate file size (5MB)
     if (file.size > 10 * 1024 * 1024) {
-      alert("File size should be less than 5MB");
+      toast.error("File size should be less than 5MB");
       return;
     }
 
@@ -86,6 +87,7 @@ export const useImageUpload = ({
       // Here you would typically upload to your server/cloud storage
       // For now, we'll just use the preview URL
       onImageAdd(previewUrl);
+      toast.success("image added")
       resetStates();
       onClose();
     } catch (error) {

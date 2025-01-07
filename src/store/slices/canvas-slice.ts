@@ -2,6 +2,7 @@ import { StateCreator } from "zustand";
 import { fabric } from "fabric";
 import { createShape } from "@/lib/shapes";
 import { Image } from "fabric/fabric-impl";
+import { toast } from "sonner";
 
 // Move types from context to types folder
 export interface Control {
@@ -223,6 +224,7 @@ export const createCanvasSlice: StateCreator<CanvasSlice> = (set, get) => ({
     const { canvas } = get();
     if (!canvas) return;
     canvas.clear();
+    toast.success("cleared")
     canvas.renderAll();
   },
 
