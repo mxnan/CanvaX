@@ -63,7 +63,7 @@ const Canvas = () => {
   return (
     <canvas
       ref={canvasRef}
-      className="bg-neutral-900/20 rounded-lg shadow-xl"
+      className="bg-neutral-800/20 rounded-lg shadow-xl"
     />
   );
 };

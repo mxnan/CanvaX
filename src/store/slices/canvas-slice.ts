@@ -60,12 +60,24 @@ export interface CanvasSlice {
   setIsDialogOpen: (isOpen: boolean) => void;
 
   // Object control actions
-  handleObjectAction: (action: string, object: CanvasObject) => void;
+  handleObjectAction: (
+    action: string, 
+    object: CanvasObject, 
+    options?: Record<string, unknown>
+  ) => void;
   rotateObject: (object: CanvasObject, angle: number) => void;
-  flipObject: (object: CanvasObject, direction: 'horizontal' | 'vertical') => void;
+  flipObject: (
+    object: CanvasObject,
+    direction: "horizontal" | "vertical"
+  ) => void;
   resetObjectTransform: (object: CanvasObject) => void;
-  updateObjectProperties: (object: CanvasObject, properties: Partial<CanvasObject>) => void;
+  updateObjectProperties: (
+    object: CanvasObject,
+    properties: Partial<CanvasObject>
+  ) => void;
 
+  // Add shape-specific actions
+  // changeFillColor: (object: CanvasObject, color: string) => void;
 
   // // Add text-specific actions
   // handleTextEdit: (obj: CanvasObject) => void;
@@ -73,6 +85,8 @@ export interface CanvasSlice {
 
   // // Add image-specific actions
   // handleImageCrop: (obj: CanvasObject) => void;
+
+  changeFillColor: (object: CanvasObject, color: string) => void;
 }
 
 export const createCanvasSlice: StateCreator<CanvasSlice> = (set, get) => ({
@@ -91,7 +105,7 @@ export const createCanvasSlice: StateCreator<CanvasSlice> = (set, get) => ({
       preserveObjectStacking: true,
     });
 
-    fabricCanvas.on('object:added', (e) => {
+    fabricCanvas.on("object:added", (e) => {
       const obj = e.target as CanvasObject;
       if (obj) {
         const newId = `object_${Date.now()}_${get().objectCount}`;
@@ -118,17 +132,6 @@ export const createCanvasSlice: StateCreator<CanvasSlice> = (set, get) => ({
   setSelectedObject: (object) => {
     set({ selectedObject: object });
   },
-
-  // updatePosition: (position) => {
-  //   const currentPosition = get().position;
-  //   // Only update if position actually changed
-  //   if (
-  //     currentPosition.top !== position.top || 
-  //     currentPosition.left !== position.left
-  //   ) {
-  //     set({ position });
-  //   }
-  // },
 
   incrementObjectCount: () =>
     set((state) => ({
@@ -224,13 +227,13 @@ export const createCanvasSlice: StateCreator<CanvasSlice> = (set, get) => ({
     const { canvas } = get();
     if (!canvas) return;
     canvas.clear();
-    toast.success("cleared")
+    toast.success("cleared");
     canvas.renderAll();
   },
 
   setIsDialogOpen: (isOpen: boolean) => set({ isDialogOpen: isOpen }),
 
-  handleObjectAction: (action: string, object: CanvasObject) => {
+  handleObjectAction: (action: string, object: CanvasObject, options?: Record<string, unknown>) => {
     const { canvas } = get();
     if (!canvas || !object) return;
 
@@ -252,11 +255,11 @@ export const createCanvasSlice: StateCreator<CanvasSlice> = (set, get) => ({
         break;
 
       case "flipHorizontal":
-        get().flipObject(object, 'horizontal');
+        get().flipObject(object, "horizontal");
         break;
 
       case "flipVertical":
-        get().flipObject(object, 'vertical');
+        get().flipObject(object, "vertical");
         break;
 
       case "resetImage":
@@ -265,6 +268,12 @@ export const createCanvasSlice: StateCreator<CanvasSlice> = (set, get) => ({
 
       case "delete":
         get().deleteObject(object);
+        break;
+
+      case "changeFill":
+        if (options?.color) {
+          get().changeFillColor(object, options.color as string);
+        }
         break;
     }
 
@@ -277,10 +286,10 @@ export const createCanvasSlice: StateCreator<CanvasSlice> = (set, get) => ({
   },
 
   flipObject: (object, direction) => {
-    if (direction === 'horizontal') {
-      object.set('flipX', !object.flipX);
+    if (direction === "horizontal") {
+      object.set("flipX", !object.flipX);
     } else {
-      object.set('flipY', !object.flipY);
+      object.set("flipY", !object.flipY);
     }
     get().canvas?.renderAll();
   },
@@ -329,4 +338,11 @@ export const createCanvasSlice: StateCreator<CanvasSlice> = (set, get) => ({
   //   if (obj.type !== 'image') return;
   //   // Implement image cropping logic
   // },
+
+  // // add shape-specific actions
+  changeFillColor: (object: CanvasObject, color: string) => {
+    if (!object) return;
+    object.set('fill', color);
+    get().canvas?.renderAll();
+  },
 });

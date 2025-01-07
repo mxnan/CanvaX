@@ -1,8 +1,9 @@
 import React from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { getObjectControls } from "@/config/controls";
+import { Control, getObjectControls } from "@/config/controls";
 import { ControlButton } from "@/components/ui-helper/control-button";
 import { useStore } from "@/store";
+import { ColorPicker } from "@/components/ui-helper/color-picker";
 
 const ObjectControls = () => {
   const { selectedObject, handleObjectAction, canvas } = useStore();
@@ -41,10 +42,10 @@ const ObjectControls = () => {
   if (!selectedObject || !canvas) return null;
 
   const controls = getObjectControls(selectedObject.objectType || "shape");
-  console.log(selectedObject.type)
+  console.log(selectedObject.type);
 
-  const handleAction = (action: string) => {
-    handleObjectAction(action, selectedObject);
+  const handleAction = (action: string, options?: Record<string, unknown>) => {
+    handleObjectAction(action, selectedObject, options);
   };
 
   const groupedControls = controls.reduce((acc, control) => {
@@ -53,6 +54,26 @@ const ObjectControls = () => {
     acc[group].push(control);
     return acc;
   }, {} as Record<string, typeof controls>);
+
+  const renderControl = (control: Control) => {
+    if (control.action === "changeFill") {
+      return (
+        <ColorPicker
+          key={control.id}
+          control={control}
+          onColorChange={(color) => handleAction("changeFill", { color })}
+        />
+      );
+    }
+
+    return (
+      <ControlButton
+        key={control.id}
+        control={control}
+        onClick={() => handleAction(control.action)}
+      />
+    );
+  };
 
   return (
     <AnimatePresence>
@@ -72,13 +93,7 @@ const ObjectControls = () => {
           {Object.entries(groupedControls).map(([group, groupControls]) => (
             <React.Fragment key={group}>
               <div className="flex gap-1">
-                {groupControls.map((control) => (
-                  <ControlButton
-                    key={control.id}
-                    control={control}
-                    onClick={() => handleAction(control.action)}
-                  />
-                ))}
+                {groupControls.map((control) => renderControl(control))}
               </div>
               {group !== "delete" && (
                 <div className="w-px h-full bg-neutral-800" />

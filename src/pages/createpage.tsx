@@ -9,7 +9,7 @@ const Canvas = lazy(() => import("@/components/canvas/canvas"));
 
 const LoadingFallback = () => (
   <div className="flex items-center justify-center h-screen">
-    <div className="animate-spin rounded-full h-8 w-8 border-t-2 border-white"></div>
+    <div className="animate-spin rounded-full h-8 w-8 border-r-2 border-gray-500"></div>
   </div>
 );
 
