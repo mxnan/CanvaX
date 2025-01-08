@@ -1,12 +1,22 @@
 import { create } from 'zustand';
 import { CanvasSlice, createCanvasSlice } from './slices/canvas-slice';
+import { ObjectSlice, createObjectSlice } from './slices/object-slice';
+import { TransformSlice, createTransformSlice } from './slices/transform-slice';
+import { LayerSlice, createLayerSlice } from './slices/layer-slice';
+import { createStyleSlice, StyleSlice } from './slices/style-slice';
 
 
-// eslint-disable-next-line @typescript-eslint/no-empty-object-type
-interface StoreState extends CanvasSlice {
-  // Add other slices here later (auth, settings, etc.)
-}
+export interface RootState extends 
+  CanvasSlice,
+  ObjectSlice,
+  TransformSlice,
+  LayerSlice,
+  StyleSlice  {}
 
-export const useStore = create<StoreState>()((...args) => ({
+export const useStore = create<RootState>()((...args) => ({
   ...createCanvasSlice(...args),
+  ...createObjectSlice(...args),
+  ...createTransformSlice(...args),
+  ...createLayerSlice(...args),
+  ...createStyleSlice(...args),
 }));

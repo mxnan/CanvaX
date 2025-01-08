@@ -1,6 +1,6 @@
 import { 
   RectangleHorizontal, Circle, Triangle, 
-   Star, ImageIcon, CircleX 
+   Star
 } from 'lucide-react';
 
 export const SHAPE_TOOLS = [
@@ -28,16 +28,4 @@ export const SHAPE_TOOLS = [
     tooltip: 'Star',
     type: 'shape'
   },
-  {
-    id: 'image',
-    icon: ImageIcon,
-    tooltip: 'Image',
-    type: 'image'
-  },
-  {
-    id: 'clear',
-    icon: CircleX,
-    tooltip: 'Clear Canvas',
-    type: 'action'
-  }
 ];

@@ -93,11 +93,6 @@ export const sharedControls: Control[] = [
   },
 ];
 
-// // Transform controls (only for shapes and images)
-// export const transformControls: Control[] = [
-
-// ];
-
 // Shape-specific controls
 export const shapeControls: Control[] = [
   {
