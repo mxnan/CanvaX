@@ -14,7 +14,7 @@ export const createLayerSlice: StateCreator<
   [],
   [],
   LayerSlice
-> = (set, get) => ({
+> = (_set, get) => ({
   moveObjectForward: (obj) => {
     const { canvas } = get();
     if (!canvas) return;

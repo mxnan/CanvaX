@@ -8,65 +8,63 @@ const Canvas = () => {
   const canvasRef = React.useRef<HTMLCanvasElement>(null);
   const { setCanvas, setSelectedObject } = useStore();
 
-  React.useEffect(() => {
+  const initCanvas = () => {
     if (!canvasRef.current) return;
-
-    const canvas = new fabric.Canvas(canvasRef.current, {
+    return new fabric.Canvas(canvasRef.current, {
       width: window.innerWidth - 32,
       height: window.innerHeight - 32,
       preserveObjectStacking: true,
-      // Disable multi-selection/grouping
-      selection: false, // Disables group selection
+      selection: false,
     });
+  };
 
-    const updateSelectedObject = () => {
-      const activeObject = canvas.getActiveObject() as CanvasObject;
-      if (activeObject) {
-        setSelectedObject(activeObject);
-      }
-    };
+  const updateSelectedObject = React.useCallback((e: fabric.IEvent) => {
+    const activeObject = e.target as CanvasObject;
+    if (!activeObject?.id) return;
 
-    // Define all events to listen to
+    setSelectedObject(activeObject);
+  }, [setSelectedObject]);
+
+  React.useEffect(() => {
+    const canvas = initCanvas();
+    if (!canvas) return;
+
     const events = [
-      { name: "selection:created", handler: updateSelectedObject },
-      { name: "selection:updated", handler: updateSelectedObject },
-      { name: "selection:cleared", handler: () => setSelectedObject(null) },
-      { name: "object:moving", handler: updateSelectedObject },
-      { name: "object:scaling", handler: updateSelectedObject },
-      { name: "object:rotating", handler: updateSelectedObject },
-      { name: "mouse:wheel", handler: updateSelectedObject },
-    ] as const;
+      // "selection:created",
+      // "selection:updated",
+      "object:moving",
+      // "object:scaling",
+      // "object:rotating",
+      // "mouse:wheel",
+    ];
 
-    // Add all event listeners
-    events.forEach(({ name, handler }) => {
-      canvas.on(name, handler);
+    events.forEach((name) => {
+      canvas.on(name, updateSelectedObject);
     });
 
-    // Set canvas in store
     setCanvas(canvas);
 
-    // Cleanup function
+    // Error boundary for detecting render loops
+    window.addEventListener("error", (e) => {
+      if (e.message.includes("Maximum update depth exceeded")) {
+        console.error("Render loop detected:", e);
+      }
+    });
+
     return () => {
-      // Remove all event listeners
-      events.forEach(({ name, handler }) => {
-        canvas.off(name, handler);
+      events.forEach((name) => {
+        canvas.off(name, updateSelectedObject);
       });
-
-      // Dispose of canvas
       canvas.dispose();
-
-      // Clear canvas from store
       setCanvas(null);
       setSelectedObject(null);
     };
-  }, [setCanvas, setSelectedObject]);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [setCanvas, updateSelectedObject]);
 
   return (
     <>
-      <canvas
-        className="bg-neutral-800/20 rounded-lg shadow-xl"
-        ref={canvasRef}
-      />
+      <canvas ref={canvasRef} className="bg-neutral-800/20 rounded-lg shadow-xl" />
       <CropControls />
     </>
   );

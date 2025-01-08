@@ -7,7 +7,7 @@ export interface StyleSlice {
 }
 
 export const createStyleSlice: StateCreator<RootState, [], [], StyleSlice> = (
-  set,
+  _set,
   get
 ) => ({
   changeFillColor: (object, color) => {

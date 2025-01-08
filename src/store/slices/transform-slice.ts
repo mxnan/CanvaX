@@ -20,7 +20,7 @@ export const createTransformSlice: StateCreator<
   [],
   [],
   TransformSlice
-> = (set, get) => ({
+> = (_set, get) => ({
   rotateObject: (object, angle) => {
     object.rotate!((object.angle || 0) + angle);
     get().canvas?.renderAll();
