@@ -108,6 +108,12 @@ export const createCanvasSlice: StateCreator<
           get().changeFillColor(object, options.color as string);
         }
         break;
+
+      case "cropImage":
+        if (object.type === 'image') {
+          get().startCropping(object);
+        }
+        break;
     }
 
     canvas.renderAll();

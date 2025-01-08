@@ -4,6 +4,7 @@ import { ObjectSlice, createObjectSlice } from './slices/object-slice';
 import { TransformSlice, createTransformSlice } from './slices/transform-slice';
 import { LayerSlice, createLayerSlice } from './slices/layer-slice';
 import { createStyleSlice, StyleSlice } from './slices/style-slice';
+import { ImageSlice, createImageSlice } from './slices/image-slice';
 
 
 export interface RootState extends 
@@ -11,7 +12,8 @@ export interface RootState extends
   ObjectSlice,
   TransformSlice,
   LayerSlice,
-  StyleSlice  {}
+  StyleSlice,
+  ImageSlice {}
 
 export const useStore = create<RootState>()((...args) => ({
   ...createCanvasSlice(...args),
@@ -19,4 +21,5 @@ export const useStore = create<RootState>()((...args) => ({
   ...createTransformSlice(...args),
   ...createLayerSlice(...args),
   ...createStyleSlice(...args),
+  ...createImageSlice(...args),
 }));

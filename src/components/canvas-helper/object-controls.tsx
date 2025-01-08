@@ -42,7 +42,6 @@ const ObjectControls = () => {
   if (!selectedObject || !canvas) return null;
 
   const controls = getObjectControls(selectedObject.objectType || "shape");
-  console.log(selectedObject.type);
 
   const handleAction = (action: string, options?: Record<string, unknown>) => {
     handleObjectAction(action, selectedObject, options);

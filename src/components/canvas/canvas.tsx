@@ -1,7 +1,8 @@
 import React from "react";
 import { fabric } from "fabric";
 import { useStore } from "@/store";
-import { CanvasObject } from "@/store/slices/canvas-slice";
+import { CanvasObject } from "@/store/types";
+import { CropControls } from "../ui-helper/crop-controls";
 
 const Canvas = () => {
   const canvasRef = React.useRef<HTMLCanvasElement>(null);
@@ -15,7 +16,7 @@ const Canvas = () => {
       height: window.innerHeight - 32,
       preserveObjectStacking: true,
       // Disable multi-selection/grouping
-      selection: false,         // Disables group selection
+      selection: false, // Disables group selection
     });
 
     const updateSelectedObject = () => {
@@ -50,10 +51,10 @@ const Canvas = () => {
       events.forEach(({ name, handler }) => {
         canvas.off(name, handler);
       });
-      
+
       // Dispose of canvas
       canvas.dispose();
-      
+
       // Clear canvas from store
       setCanvas(null);
       setSelectedObject(null);
@@ -61,10 +62,13 @@ const Canvas = () => {
   }, [setCanvas, setSelectedObject]);
 
   return (
-    <canvas
-      ref={canvasRef}
-      className="bg-neutral-800/20 rounded-lg shadow-xl"
-    />
+    <>
+      <canvas
+        className="bg-neutral-800/20 rounded-lg shadow-xl"
+        ref={canvasRef}
+      />
+      <CropControls />
+    </>
   );
 };
 
