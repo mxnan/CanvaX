@@ -1,73 +1,120 @@
 import React from "react";
 import { fabric } from "fabric";
-import { useStore } from "@/store";
-import { CanvasObject } from "@/store/types";
+import { useCanvas } from "@/context/canvas-context";
+import { CanvasObject } from "@/context/types";
 import { CropControls } from "../ui-helper/crop-controls";
 
 const Canvas = () => {
   const canvasRef = React.useRef<HTMLCanvasElement>(null);
-  const { setCanvas, setSelectedObject } = useStore();
+  const { setCanvas, setSelectedObject } = useCanvas();
 
-  const initCanvas = () => {
+  const initCanvas = React.useCallback(() => {
     if (!canvasRef.current) return;
-    return new fabric.Canvas(canvasRef.current, {
+    
+    const fabricCanvas = new fabric.Canvas(canvasRef.current, {
       width: window.innerWidth - 32,
       height: window.innerHeight - 32,
       preserveObjectStacking: true,
       selection: false,
+      renderOnAddRemove: false,
+      stopContextMenu: true,
     });
-  };
 
-  const updateSelectedObject = React.useCallback((e: fabric.IEvent) => {
-    const activeObject = e.target as CanvasObject;
-    if (!activeObject?.id) return;
+    fabricCanvas.setDimensions({
+      width: window.innerWidth - 32,
+      height: window.innerHeight - 32,
+    });
 
-    setSelectedObject(activeObject);
+    return fabricCanvas;
+  }, []);
+
+  // Improved selection handler
+  const handleObjectSelection = React.useCallback((e: fabric.IEvent) => {
+    // console.log("Selection event:", e.type, e.target);
+    const target = e.target as CanvasObject | undefined;
+    
+    if (!target) {
+      setSelectedObject(null);
+      return;
+    }
+
+    // Ensure the object has required properties
+    if (!target.id) {
+      target.set('id', `object_${Date.now()}`);
+    }
+    if (!target.objectType) {
+      target.set('objectType', 'shape');
+    }
+
+    setSelectedObject(target);
   }, [setSelectedObject]);
 
   React.useEffect(() => {
     const canvas = initCanvas();
     if (!canvas) return;
 
-    const events = [
-      // "selection:created",
-      // "selection:updated",
-      "object:moving",
-      // "object:scaling",
-      // "object:rotating",
-      // "mouse:wheel",
-    ];
-
-    events.forEach((name) => {
-      canvas.on(name, updateSelectedObject);
-    });
-
     setCanvas(canvas);
 
-    // Error boundary for detecting render loops
-    window.addEventListener("error", (e) => {
-      if (e.message.includes("Maximum update depth exceeded")) {
-        console.error("Render loop detected:", e);
-      }
+    // Selection events with debug logs
+    const selectionEvents = [
+      'selection:created',
+      'selection:updated',
+      'selection:cleared',
+      'mouse:down',
+    ];
+
+    selectionEvents.forEach(eventName => {
+      canvas.on(eventName, (e) => {
+        console.log(`Canvas event: ${eventName}`);
+        handleObjectSelection(e);
+      });
     });
 
-    return () => {
-      events.forEach((name) => {
-        canvas.off(name, updateSelectedObject);
+    // Modification events
+    const modEvents = ['object:moving', 'object:scaling', 'object:rotating', 'object:modified'];
+    modEvents.forEach(eventName => {
+      canvas.on(eventName, (e) => {
+        canvas.renderAll();
+        // Ensure selection is maintained during modification
+        if (e.target) {
+          handleObjectSelection(e);
+        }
       });
-      canvas.dispose();
-      setCanvas(null);
-      setSelectedObject(null);
+    });
+
+    // Handle window resize
+    const handleResize = () => {
+      canvas.setDimensions({
+        width: window.innerWidth - 32,
+        height: window.innerHeight - 32,
+      });
+      canvas.requestRenderAll();
     };
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [setCanvas, updateSelectedObject]);
+    window.addEventListener('resize', handleResize);
+
+    return () => {
+      selectionEvents.forEach(eventName => {
+        canvas.off(eventName);
+      });
+      modEvents.forEach(eventName => {
+        canvas.off(eventName);
+      });
+      window.removeEventListener('resize', handleResize);
+      canvas.dispose();
+      setSelectedObject(null);
+      setCanvas(null);
+    };
+  }, [initCanvas, setCanvas, setSelectedObject, handleObjectSelection]);
 
   return (
     <>
-      <canvas ref={canvasRef} className="bg-neutral-800/20 rounded-lg shadow-xl" />
+      <canvas 
+        ref={canvasRef} 
+        className="bg-neutral-800/20 rounded-lg shadow-xl"
+      />
       <CropControls />
     </>
   );
 };
 
-export default Canvas;
+export default React.memo(Canvas);

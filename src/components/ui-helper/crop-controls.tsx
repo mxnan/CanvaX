@@ -1,9 +1,9 @@
 import React from "react";
 import { Button } from "@/components/ui/button";
-import { useStore } from "@/store";
+import { useCanvas } from "@/context/canvas-context";
 
 export const CropControls: React.FC = () => {
-  const { isCropping, applyCrop } = useStore();
+  const { isCropping, applyCrop } = useCanvas();
 
   if (!isCropping) return null;
 
