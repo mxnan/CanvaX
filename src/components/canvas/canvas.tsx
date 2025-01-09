@@ -16,7 +16,7 @@ const Canvas = () => {
       height: window.innerHeight - 32,
       preserveObjectStacking: true,
       selection: false,
-      renderOnAddRemove: false,
+      renderOnAddRemove: true,
       stopContextMenu: true,
     });
 
@@ -28,9 +28,7 @@ const Canvas = () => {
     return fabricCanvas;
   }, []);
 
-  // Improved selection handler
   const handleObjectSelection = React.useCallback((e: fabric.IEvent) => {
-    // console.log("Selection event:", e.type, e.target);
     const target = e.target as CanvasObject | undefined;
     
     if (!target) {
@@ -38,13 +36,8 @@ const Canvas = () => {
       return;
     }
 
-    // Ensure the object has required properties
-    if (!target.id) {
-      target.set('id', `object_${Date.now()}`);
-    }
-    if (!target.objectType) {
-      target.set('objectType', 'shape');
-    }
+    if (!target.id) target.set('id', `object_${Date.now()}`);
+    if (!target.objectType) target.set('objectType', 'shape');
 
     setSelectedObject(target);
   }, [setSelectedObject]);
@@ -55,34 +48,22 @@ const Canvas = () => {
 
     setCanvas(canvas);
 
-    // Selection events with debug logs
-    const selectionEvents = [
-      'selection:created',
-      'selection:updated',
-      'selection:cleared',
-      'mouse:down',
-    ];
+    const events = {
+      selection: ['selection:created', 'selection:updated', 'selection:cleared'],
+      modification: ['object:moving', 'object:scaling', 'object:rotating', 'object:modified']
+    };
 
-    selectionEvents.forEach(eventName => {
+    events.selection.forEach(eventName => {
+      canvas.on(eventName, handleObjectSelection);
+    });
+
+    events.modification.forEach(eventName => {
       canvas.on(eventName, (e) => {
-        console.log(`Canvas event: ${eventName}`);
-        handleObjectSelection(e);
+        canvas.requestRenderAll();
+        if (e.target) handleObjectSelection(e);
       });
     });
 
-    // Modification events
-    const modEvents = ['object:moving', 'object:scaling', 'object:rotating', 'object:modified'];
-    modEvents.forEach(eventName => {
-      canvas.on(eventName, (e) => {
-        canvas.renderAll();
-        // Ensure selection is maintained during modification
-        if (e.target) {
-          handleObjectSelection(e);
-        }
-      });
-    });
-
-    // Handle window resize
     const handleResize = () => {
       canvas.setDimensions({
         width: window.innerWidth - 32,
@@ -93,10 +74,7 @@ const Canvas = () => {
     window.addEventListener('resize', handleResize);
 
     return () => {
-      selectionEvents.forEach(eventName => {
-        canvas.off(eventName);
-      });
-      modEvents.forEach(eventName => {
+      [...events.selection, ...events.modification].forEach(eventName => {
         canvas.off(eventName);
       });
       window.removeEventListener('resize', handleResize);
@@ -108,10 +86,7 @@ const Canvas = () => {
 
   return (
     <>
-      <canvas 
-        ref={canvasRef} 
-        className="bg-neutral-800/20 rounded-lg shadow-xl"
-      />
+      <canvas ref={canvasRef} className="bg-neutral-800/20 rounded-lg shadow-xl" />
       <CropControls />
     </>
   );

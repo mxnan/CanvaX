@@ -18,7 +18,7 @@ const ObjectControls = () => {
     rotateObject,
     flipObject,
     resetObjectTransform,
-    setIsCropping,
+    startCropping,
   } = useCanvas();
 
   const [position, setPosition] = React.useState({ top: 0, left: 0 });
@@ -29,31 +29,40 @@ const ObjectControls = () => {
   }, [selectedObject]);
 
   const updatePosition = React.useCallback(() => {
-    if (!selectedObject || !canvas) {
-      console.log("Cannot update position - missing object or canvas");
-      return;
-    }
+    if (!selectedObject || !canvas) return;
 
-    try {
-      const canvasElement = canvas.getElement();
-      if (!canvasElement) return;
+    const canvasElement = canvas.getElement();
+    if (!canvasElement) return;
 
-      const zoom = canvas.getZoom();
-      const bounds = selectedObject.getBoundingRect();
-      const offset = canvasElement.getBoundingClientRect();
+    const zoom = canvas.getZoom();
+    const bounds = selectedObject.getBoundingRect();
+    const offset = canvasElement.getBoundingClientRect();
 
-      const newPosition = {
-        top: bounds.top * zoom + offset.top - 10,
-        left: bounds.left * zoom + offset.left,
-      };
-
-      console.log("New position calculated:", newPosition); // Debug log
-      setPosition(newPosition);
-    } catch (error) {
-      console.error('Position update error:', error);
-    }
+    setPosition({
+      top: bounds.top * zoom + offset.top - 10,
+      left: bounds.left * zoom + offset.left,
+    });
   }, [selectedObject, canvas]);
 
+  // Update position when selected object changes or during modifications
+  React.useEffect(() => {
+    if (!canvas || !selectedObject) return;
+
+    const events = [
+      "object:moving",
+      "object:scaling",
+      "object:rotating",
+      "object:modified",
+      "selection:created",
+      "selection:updated",
+    ];
+
+    // Initial position update
+    updatePosition();
+
+    events.forEach((event) => canvas.on(event, updatePosition));
+    return () => events.forEach((event) => canvas.off(event, updatePosition));
+  }, [canvas, selectedObject, updatePosition]);
   // Update position when selected object changes
   React.useEffect(() => {
     if (selectedObject && canvas) {
@@ -67,21 +76,21 @@ const ObjectControls = () => {
     if (!canvas || !selectedObject) return;
 
     const events = [
-      'object:moving',
-      'object:scaling',
-      'object:rotating',
-      'object:modified',
-      'selection:created',
-      'selection:updated',
-      'after:render',
+      "object:moving",
+      "object:scaling",
+      "object:rotating",
+      "object:modified",
+      "selection:created",
+      "selection:updated",
+      "after:render",
     ];
 
-    events.forEach(event => {
+    events.forEach((event) => {
       canvas.on(event, updatePosition);
     });
 
     return () => {
-      events.forEach(event => {
+      events.forEach((event) => {
         canvas.off(event, updatePosition);
       });
     };
@@ -127,7 +136,7 @@ const ObjectControls = () => {
             break;
           case "cropImage":
             if (selectedObject.objectType === "image") {
-              setIsCropping(true);
+              startCropping(selectedObject);
             }
             break;
         }
@@ -146,7 +155,7 @@ const ObjectControls = () => {
       rotateObject,
       flipObject,
       resetObjectTransform,
-      setIsCropping,
+      startCropping,
     ]
   );
 
@@ -158,13 +167,13 @@ const ObjectControls = () => {
   const controls = getObjectControls(selectedObject.objectType || "shape");
 
   return (
-    <AnimatePresence >
+    <AnimatePresence mode="wait">
       <motion.div
         key={selectedObject.id} // Add key for proper animation
         initial={{ opacity: 0, y: -10 }}
         animate={{ opacity: 1, y: 0 }}
         exit={{ opacity: 0, y: -10 }}
-        transition={{ duration: 0.2 }}
+        transition={{ duration: 0.3 }}
         className="fixed z-[9999] pointer-events-auto"
         style={{
           top: position.top - 90,
@@ -183,23 +192,26 @@ const ObjectControls = () => {
           ).map(([group, groupControls]) => (
             <React.Fragment key={group}>
               <div className="flex gap-1">
-                {groupControls.map((control) =>
-                  control.action === "changeFill" ? (
-                    <ColorPicker
-                      key={control.id}
-                      control={control}
-                      onColorChange={(color) =>
-                        handleAction("changeFill", { color })
-                      }
-                    />
-                  ) : (
+                {groupControls.map((control) => {
+                  if (control.action === "changeFill") {
+                    return (
+                      <ColorPicker
+                        key={control.id}
+                        control={control}
+                        onColorChange={(color) =>
+                          handleAction("changeFill", { color })
+                        }
+                      />
+                    );
+                  }
+                  return (
                     <ControlButton
                       key={control.id}
                       control={control}
                       onClick={() => handleAction(control.action)}
                     />
-                  )
-                )}
+                  );
+                })}
               </div>
               {group !== "delete" && (
                 <div className="w-px h-full bg-neutral-800" />

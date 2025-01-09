@@ -1,21 +1,25 @@
 import React from "react";
 import { Button } from "@/components/ui/button";
 import { useCanvas } from "@/context/canvas-context";
+import { motion, AnimatePresence } from "framer-motion";
 
-export const CropControls: React.FC = () => {
+export function CropControls() {
   const { isCropping, applyCrop } = useCanvas();
 
   if (!isCropping) return null;
 
-  const handleApplyCrop = () => {
-    applyCrop();
-  };
-
   return (
-    <div className="fixed bottom-4 left-1/2 -translate-x-1/2 flex gap-2 bg-neutral-900/90 backdrop-blur-sm rounded-lg p-2 shadow-lg border border-neutral-800 z-50">
-      <Button variant="secondary" onClick={handleApplyCrop}>
-        Apply Crop
-      </Button>
-    </div>
+    <AnimatePresence>
+      <motion.div
+        initial={{ opacity: 0, y: -20 }}
+        animate={{ opacity: 1, y: 0 }}
+        exit={{ opacity: 0, y: -20 }}
+        className="fixed top-4 left-1/2 transform -translate-x-1/2 z-[9999] flex gap-2"
+      >
+        <Button variant="secondary" onClick={applyCrop}>
+          Apply Crop
+        </Button>
+      </motion.div>
+    </AnimatePresence>
   );
-};
+}

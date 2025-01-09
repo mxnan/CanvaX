@@ -52,6 +52,12 @@ export interface CanvasContextValue {
   // Crop Actions
   applyCrop: () => void;
   setIsCropping: (isCropping: boolean) => void;
+
+  // Crop-related state
+  cropObject: fabric.Image | null;
+  
+  // Crop actions
+  startCropping: (object: CanvasObject) => void;
 }
 
 export interface CanvasProviderProps {

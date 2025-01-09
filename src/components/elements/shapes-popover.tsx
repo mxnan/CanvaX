@@ -4,14 +4,45 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover";
-import { SHAPE_TOOLS } from "@/config/shapes";
-import { Square } from "lucide-react";
+import {
+  Square,
+  RectangleHorizontal,
+  Circle,
+  Triangle,
+  Star,
+} from "lucide-react";
 
 interface ShapesPopoverProps {
   onShapeAdd: (type: string) => void;
 }
 
 export const ShapesPopover = ({ onShapeAdd }: ShapesPopoverProps) => {
+  const SHAPE_TOOLS = [
+    {
+      id: "rectangle",
+      icon: RectangleHorizontal,
+      tooltip: "Rectangle",
+      type: "shape",
+    },
+    {
+      id: "circle",
+      icon: Circle,
+      tooltip: "Circle",
+      type: "shape",
+    },
+    {
+      id: "triangle",
+      icon: Triangle,
+      tooltip: "Triangle",
+      type: "shape",
+    },
+    {
+      id: "star",
+      icon: Star,
+      tooltip: "Star",
+      type: "shape",
+    },
+  ];
   const shapeTools = SHAPE_TOOLS.filter((tool) => tool.type === "shape");
 
   return (
