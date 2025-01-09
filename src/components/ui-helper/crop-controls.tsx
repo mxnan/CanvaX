@@ -3,7 +3,7 @@ import { Button } from "@/components/ui/button";
 import { useCanvas } from "@/context/canvas-context";
 import { motion, AnimatePresence } from "framer-motion";
 
-export function CropControls() {
+const CropControls: React.FC = () => {
   const { isCropping, applyCrop } = useCanvas();
 
   if (!isCropping) return null;
@@ -23,3 +23,5 @@ export function CropControls() {
     </AnimatePresence>
   );
 }
+
+export default CropControls;

@@ -11,8 +11,7 @@ interface ControlButtonProps {
   };
   onClick: () => void;
 }
-
-export const ControlButton = ({
+ const ControlButton = ({
   control,
   onClick,
 }: ControlButtonProps) => {
@@ -39,3 +38,5 @@ export const ControlButton = ({
     </Button>
   );
 };
+
+export default ControlButton;

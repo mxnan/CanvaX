@@ -1,7 +1,7 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
-import React, { createContext, useContext, useState, useCallback } from "react";
+
+import  { createContext, useContext, useState, useCallback } from "react";
 import { fabric } from "fabric";
-import { CanvasContextValue, CanvasProviderProps, CanvasObject, Position } from "./types";
+import { CanvasContextValue, CanvasProviderProps, CanvasObject } from "./types";
 import { createShape } from "@/lib/shapes";
 import { Image } from "fabric/fabric-impl";
 
@@ -11,7 +11,7 @@ export function CanvasProvider({ children }: CanvasProviderProps) {
   // Core State
   const [canvas, setCanvas] = useState<fabric.Canvas | null>(null);
   const [selectedObject, setSelectedObject] = useState<CanvasObject | null>(null);
-  const [position, setPosition] = useState<Position>({ top: 0, left: 0 });
+  // const [position, setPosition] = useState<Position>({ top: 0, left: 0 });
   const [objectCount, setObjectCount] = useState(0);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [isCropping, setIsCropping] = useState(false);
@@ -268,7 +268,7 @@ export function CanvasProvider({ children }: CanvasProviderProps) {
     // State
     canvas,
     selectedObject,
-    position,
+    // position,
     objectCount,
     isDialogOpen,
     isCropping,

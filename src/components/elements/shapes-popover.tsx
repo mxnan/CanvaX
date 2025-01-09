@@ -16,7 +16,7 @@ interface ShapesPopoverProps {
   onShapeAdd: (type: string) => void;
 }
 
-export const ShapesPopover = ({ onShapeAdd }: ShapesPopoverProps) => {
+ const ShapesPopover = ({ onShapeAdd }: ShapesPopoverProps) => {
   const SHAPE_TOOLS = [
     {
       id: "rectangle",
@@ -91,3 +91,5 @@ export const ShapesPopover = ({ onShapeAdd }: ShapesPopoverProps) => {
     </Popover>
   );
 };
+
+export default ShapesPopover;

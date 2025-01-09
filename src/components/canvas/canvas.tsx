@@ -2,7 +2,8 @@ import React from "react";
 import { fabric } from "fabric";
 import { useCanvas } from "@/context/canvas-context";
 import { CanvasObject } from "@/context/types";
-import { CropControls } from "../ui-helper/crop-controls";
+import CropControls from "../ui-helper/crop-controls";
+
 
 const Canvas = () => {
   const canvasRef = React.useRef<HTMLCanvasElement>(null);

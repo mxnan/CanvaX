@@ -7,16 +7,11 @@ export interface CanvasObject extends fabric.Object {
   objectType?: string;
 }
 
-export interface Position {
-  top: number;
-  left: number;
-}
-
 export interface CanvasContextValue {
   // Canvas State
   canvas: fabric.Canvas | null;
   selectedObject: CanvasObject | null;
-  position: Position;
+  // position: Position;
   objectCount: number;
   isDialogOpen: boolean;
   isCropping: boolean;

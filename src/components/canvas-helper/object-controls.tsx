@@ -1,10 +1,10 @@
 import React from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { getObjectControls } from "@/config/controls";
-import { ControlButton } from "@/components/ui-helper/control-button";
 import { useCanvas } from "@/context/canvas-context";
-import { ColorPicker } from "@/components/ui-helper/color-picker";
 import { ControlAction } from "@/config/controls";
+import ColorPicker from "../ui-helper/color-picker";
+import ControlButton from "../ui-helper/control-button";
 
 const ObjectControls = () => {
   const {
@@ -198,7 +198,7 @@ const ObjectControls = () => {
                       <ColorPicker
                         key={control.id}
                         control={control}
-                        onColorChange={(color) =>
+                        onColorChange={(color: string) =>
                           handleAction("changeFill", { color })
                         }
                       />

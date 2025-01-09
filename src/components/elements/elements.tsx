@@ -1,10 +1,12 @@
 import React from "react";
 import { Button } from "@/components/ui/button";
-import { ImageUpload } from "@/components/canvas-helper/image-upload";
+
 import { Image, Trash2 } from "lucide-react";
-import { ShapesPopover } from "./shapes-popover";
+
 import { useCanvas } from "@/context/canvas-context";
 import { toast } from "sonner";
+import ImageUpload from "../canvas-helper/image-upload";
+import ShapesPopover from "./shapes-popover";
 
 const Elements = () => {
   const {

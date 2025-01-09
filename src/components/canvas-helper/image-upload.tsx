@@ -15,7 +15,7 @@ interface ImageUploadProps {
   onImageAdd: (url: string) => void;
 }
 
-export const ImageUpload = ({
+const ImageUpload = ({
   isOpen,
   onClose,
   onImageAdd,
@@ -112,3 +112,5 @@ export const ImageUpload = ({
     </Dialog>
   );
 };
+
+export default ImageUpload;

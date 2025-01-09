@@ -3,16 +3,17 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover";
-import { ControlButton } from "./control-button";
+
 import { Control } from "@/config/controls";
 import { Button } from "../ui/button";
+import ControlButton from "./control-button";
 
 interface ColorPickerProps {
   control: Control;
   onColorChange: (color: string) => void;
 }
 
-export function ColorPicker({ control, onColorChange }: ColorPickerProps) {
+const ColorPicker = ({ control, onColorChange }: ColorPickerProps) => {
   const defaultColors = [
     "#000000",
     "#ffffff",
@@ -56,4 +57,6 @@ export function ColorPicker({ control, onColorChange }: ColorPickerProps) {
       </PopoverContent>
     </Popover>
   );
-}
+};
+
+export default ColorPicker;
