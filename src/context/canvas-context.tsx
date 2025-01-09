@@ -1,168 +1,325 @@
-import React, {
-  createContext,
-  useContext,
-  useState,
-  useCallback,
-  useEffect,
-} from "react";
+/* eslint-disable @typescript-eslint/no-unused-vars */
+import React, { createContext, useContext, useState, useCallback } from "react";
 import { fabric } from "fabric";
-import { ControlGroup } from "@/config/controls";
+import { CanvasContextValue, CanvasProviderProps, CanvasObject, Position } from "./types";
+import { createShape } from "@/lib/shapes";
+import { Image } from "fabric/fabric-impl";
 
-// Type Definitions
-export interface CanvasObject extends fabric.Object {
-  id?: string;
-  zIndex?: number;
-  objectType?: string;
-}
+const CanvasContext = createContext<CanvasContextValue | undefined>(undefined);
 
-export interface Position {
-  top: number;
-  left: number;
-}
-
-export interface CanvasContextType {
-  canvas: fabric.Canvas | null;
-  selectedObject: CanvasObject | null;
-  position: Position;
-  setCanvas: (canvas: fabric.Canvas | null) => void;
-  setSelectedObject: (object: CanvasObject | null) => void;
-  moveObjectForward: (obj: CanvasObject) => void;
-  moveObjectBackward: (obj: CanvasObject) => void;
-  deleteObject: (obj: CanvasObject) => void;
-  duplicateObject: (obj: CanvasObject) => void;
-}
-
-// Control Type Definitions
-export interface Control {
-  id: string;
-  icon?: React.ElementType;
-  action: string;
-  tooltip: string;
-  className?: string;
-  group: ControlGroup;
-}
-
-export interface ShapeTool {
-  id: string;
-  icon: React.ElementType;
-  tooltip: string;
-  type: "shape" | "text" | "image" | "action";
-}
-
-// Context Creation and Provider
-const CanvasContext = createContext<CanvasContextType | null>(null);
-
-export const CanvasProvider = ({ children }: { children: React.ReactNode }) => {
+export function CanvasProvider({ children }: CanvasProviderProps) {
+  // Core State
   const [canvas, setCanvas] = useState<fabric.Canvas | null>(null);
-  const [selectedObject, setSelectedObject] = useState<CanvasObject | null>(
-    null
-  );
+  const [selectedObject, setSelectedObject] = useState<CanvasObject | null>(null);
   const [position, setPosition] = useState<Position>({ top: 0, left: 0 });
+  const [objectCount, setObjectCount] = useState(0);
+  const [isDialogOpen, setIsDialogOpen] = useState(false);
+  const [isCropping, setIsCropping] = useState(false);
+  const [cropObject, setCropObject] = useState<fabric.Image | null>(null);
+  const [cropArea, setCropArea] = useState<fabric.Rect | null>(null);
 
-  // Update position when selected object changes or moves
-  useEffect(() => {
-    if (!canvas || !selectedObject) return;
+  // Utility Functions
+  const incrementObjectCount = useCallback(() => {
+    setObjectCount(prev => prev + 1);
+  }, []);
 
-    const updateControlsPosition = () => {
-      const zoom = canvas.getZoom();
-      const bounds = selectedObject.getBoundingRect();
-      const offset = canvas.getElement().getBoundingClientRect();
+  // Object Actions
+  const addShape = useCallback((type: string) => {
+    if (!canvas) return;
+    
+    const shape = createShape({ canvas, type });
+    if (shape) {
+      shape.set({
+        objectType: "shape",
+        id: `${type}_${Date.now()}`,
+        selectable: true,
+        hasControls: true,
+      } as Partial<CanvasObject>);
 
-      setPosition({
-        top: bounds.top * zoom + offset.top,
-        left: bounds.left * zoom + offset.left,
+      canvas.add(shape);
+      canvas.setActiveObject(shape);
+      canvas.centerObject(shape);
+      canvas.requestRenderAll();
+      setSelectedObject(shape as CanvasObject);
+      incrementObjectCount();
+    }
+  }, [canvas, incrementObjectCount, setSelectedObject]);
+
+  const addImage = useCallback((url: string) => {
+    if (!canvas) return;
+
+    fabric.Image.fromURL(url, (img) => {
+      const maxSize = 300;
+      const scale = Math.min(maxSize / img.width!, maxSize / img.height!);
+
+      img.set({
+        scaleX: scale,
+        scaleY: scale,
+        objectType: "image",
+        id: `image_${Date.now()}`,
+        selectable: true,
+        hasControls: true,
+      } as Partial<Image>);
+
+      canvas.add(img);
+      canvas.centerObject(img);
+      canvas.setActiveObject(img);
+      canvas.requestRenderAll();
+      setSelectedObject(img as CanvasObject);
+      incrementObjectCount();
+    });
+
+    setIsDialogOpen(false);
+  }, [canvas, incrementObjectCount, setSelectedObject]);
+
+  const deleteObject = useCallback((obj: CanvasObject) => {
+    if (!canvas) return;
+    canvas.remove(obj);
+    setSelectedObject(null);
+  }, [canvas]);
+
+  const duplicateObject = useCallback((obj: CanvasObject) => {
+    if (!canvas) return;
+    obj.clone((cloned: fabric.Object) => {
+      const newObj = cloned as CanvasObject;
+      newObj.set({
+        left: obj.left! + 20,
+        top: obj.top! + 20,
+        id: `object_${Date.now()}`,
+        objectType: obj.objectType,
       });
-    };
 
-    // Update position initially
-    updateControlsPosition();
-
-    // Add event listeners for object modifications
-    canvas.on("object:moving", updateControlsPosition);
-    // canvas.on("object:scaling", updateControlsPosition);
-    // canvas.on("object:rotating", updateControlsPosition);
-    // canvas.on('mouse:wheel', updateControlsPosition);
-
-    return () => {
-      canvas.off("object:moving", updateControlsPosition);
-      // canvas.off("object:scaling", updateControlsPosition);
-      // canvas.off("object:rotating", updateControlsPosition);
-      // canvas.off('mouse:wheel', updateControlsPosition);
-    };
-  }, [canvas, selectedObject]);
-
-  const moveObjectForward = useCallback(
-    (obj: CanvasObject) => {
-      if (!canvas) return;
-      obj.bringForward();
+      canvas.add(newObj);
+      canvas.setActiveObject(newObj);
       canvas.renderAll();
-    },
-    [canvas]
-  );
+      incrementObjectCount();
+    });
+  }, [canvas, incrementObjectCount]);
 
-  const moveObjectBackward = useCallback(
-    (obj: CanvasObject) => {
-      if (!canvas) return;
-      obj.sendBackwards();
-      canvas.renderAll();
-    },
-    [canvas]
-  );
+  // Transform Actions
+  const moveObjectForward = useCallback((obj: CanvasObject) => {
+    if (!canvas) return;
+    obj.bringForward();
+    canvas.renderAll();
+  }, [canvas]);
 
-  const deleteObject = useCallback(
-    (obj: CanvasObject) => {
-      if (!canvas) return;
-      canvas.remove(obj);
-      setSelectedObject(null);
-    },
-    [canvas]
-  );
+  const moveObjectBackward = useCallback((obj: CanvasObject) => {
+    if (!canvas) return;
+    obj.sendBackwards();
+    canvas.renderAll();
+  }, [canvas]);
 
-  const duplicateObject = useCallback(
-    (obj: CanvasObject) => {
-      if (!canvas) return;
-      obj.clone((cloned: fabric.Object) => {
-        const newObj = cloned as CanvasObject;
-        newObj.set({
-          left: obj.left! + 20,
-          top: obj.top! + 20,
-          id: `object_${Date.now()}`,
-          objectType: obj.objectType,
-        });
+  // Style Actions
+  const changeFillColor = useCallback((object: CanvasObject, color: string) => {
+    if (!canvas || !object) return;
+    object.set("fill", color);
+    canvas.renderAll();
+  }, [canvas]);
 
-        canvas.add(newObj);
-        canvas.setActiveObject(newObj);
-        canvas.renderAll();
-      });
-    },
-    [canvas]
-  );
+  // Canvas Actions
+  const clearCanvas = useCallback(() => {
+    if (!canvas) return;
+    canvas.clear();
+    setSelectedObject(null);
+  }, [canvas]);
 
+  // Layer Actions
+  const bringToFront = useCallback((obj: CanvasObject) => {
+    if (!canvas) return;
+    obj.bringToFront();
+    canvas.renderAll();
+  }, [canvas]);
+
+  const sendToBack = useCallback((obj: CanvasObject) => {
+    if (!canvas) return;
+    obj.sendToBack();
+    canvas.renderAll();
+  }, [canvas]);
+
+  // Transform Actions
+  const rotateObject = useCallback((object: CanvasObject, angle: number) => {
+    if (!canvas || !object) return;
+    object.rotate!((object.angle || 0) + angle);
+    canvas.renderAll();
+  }, [canvas]);
+
+  const flipObject = useCallback((object: CanvasObject, direction: "horizontal" | "vertical") => {
+    if (!canvas || !object) return;
+    if (direction === "horizontal") {
+      object.set("flipX", !object.flipX);
+    } else {
+      object.set("flipY", !object.flipY);
+    }
+    canvas.renderAll();
+  }, [canvas]);
+
+  const resetObjectTransform = useCallback((object: CanvasObject) => {
+    if (!canvas || !object) return;
+    object.set({
+      scaleX: 1,
+      scaleY: 1,
+      angle: 0,
+      flipX: false,
+      flipY: false,
+    });
+    canvas.renderAll();
+  }, [canvas]);
+
+  const updateObjectProperties = useCallback((object: CanvasObject, properties: Partial<CanvasObject>) => {
+    if (!canvas || !object) return;
+    object.set(properties);
+    canvas.renderAll();
+  }, [canvas]);
+
+  // Image Actions
+  const startCropping = useCallback((object: CanvasObject) => {
+    if (!canvas || object.type !== 'image') return;
+
+    const image = object as fabric.Image;
+    const cropArea = new fabric.Rect({
+      left: image.left,
+      top: image.top,
+      width: image.width! * image.scaleX!,
+      height: image.height! * image.scaleY!,
+      fill: 'transparent',
+      stroke: '#ff0000',
+      strokeWidth: 2,
+      strokeDashArray: [5, 5],
+      cornerColor: 'white',
+      cornerSize: 10,
+      // Disable rotation and keep only scaling/moving
+      lockRotation: true,
+      hasRotatingPoint: false,
+      lockSkewingX: true,
+      lockSkewingY: true,
+      transparentCorners: false,
+    });
+
+    // Disable controls on the original image while cropping
+    image.selectable = false;
+    image.evented = false;
+
+    canvas.add(cropArea);
+    canvas.setActiveObject(cropArea);
+    setCropObject(image);
+    setCropArea(cropArea);
+    setIsCropping(true);
+    canvas.requestRenderAll();
+  }, [canvas]);
+
+  const applyCrop = useCallback(() => {
+    if (!canvas || !cropObject || !cropArea) return;
+
+    const imageElement = cropObject.getElement();
+    const cropBounds = cropArea.getBoundingRect();
+    const imageBounds = cropObject.getBoundingRect();
+
+    // Calculate the scale of the original image
+    const originalScale = cropObject.scaleX!;
+
+    const tempCanvas = document.createElement('canvas');
+    const tempCtx = tempCanvas.getContext('2d')!;
+    tempCanvas.width = cropBounds.width;
+    tempCanvas.height = cropBounds.height;
+
+    tempCtx.drawImage(
+      imageElement,
+      (cropBounds.left - imageBounds.left) / cropObject.scaleX!,
+      (cropBounds.top - imageBounds.top) / cropObject.scaleY!,
+      cropBounds.width / cropObject.scaleX!,
+      cropBounds.height / cropObject.scaleY!,
+      0,
+      0,
+      cropBounds.width,
+      cropBounds.height
+    );
+
+    const dataUrl = tempCanvas.toDataURL(cropObject.type);
+    fabric.Image.fromURL(dataUrl, (newImage) => {
+      newImage.set({
+        left: cropBounds.left,
+        top: cropBounds.top,
+        objectType: "image",
+        id: `image_${Date.now()}`,
+        selectable: true,
+        evented: true,
+        // Maintain the original image's scale
+        scaleX: originalScale,
+        scaleY: originalScale,
+      } as Partial<Image>);
+
+      canvas.add(newImage);
+      canvas.setActiveObject(newImage);
+      incrementObjectCount();
+
+      // Re-enable the original image controls
+      cropObject.selectable = true;
+      cropObject.evented = true;
+
+      canvas.remove(cropArea);
+      setCropObject(null);
+      setCropArea(null);
+      setIsCropping(false);
+      canvas.requestRenderAll();
+    });
+  }, [canvas, cropObject, cropArea, incrementObjectCount]);
+
+  const value = {
+    // State
+    canvas,
+    selectedObject,
+    position,
+    objectCount,
+    isDialogOpen,
+    isCropping,
+    cropObject,
+
+    // Setters
+    setCanvas,
+    setSelectedObject,
+    setIsDialogOpen,
+    setIsCropping,
+    incrementObjectCount,
+
+    // Object Actions
+    addShape,
+    addImage,
+    deleteObject,
+    duplicateObject,
+    clearCanvas,
+
+    // Layer Actions
+    moveObjectForward,
+    moveObjectBackward,
+    bringToFront,
+    sendToBack,
+
+    // Transform Actions
+    rotateObject,
+    flipObject,
+    resetObjectTransform,
+    updateObjectProperties,
+
+    // Style Actions
+    changeFillColor,
+
+    // Crop Actions
+    startCropping,
+    applyCrop,
+  };
 
   return (
-    <CanvasContext.Provider
-      value={{
-        canvas,
-        selectedObject,
-        position,
-        setCanvas,
-        setSelectedObject,
-        moveObjectForward,
-        moveObjectBackward,
-        deleteObject,
-        duplicateObject,
-      }}
-    >
+    <CanvasContext.Provider value={value}>
       {children}
     </CanvasContext.Provider>
   );
-};
+}
 
 // eslint-disable-next-line react-refresh/only-export-components
-export const useCanvasContext = () => {
+export const useCanvas = () => {
   const context = useContext(CanvasContext);
-  if (!context) {
-    throw new Error("useCanvasContext must be used within a CanvasProvider");
+  if (context === undefined) {
+    throw new Error("useCanvas must be used within a CanvasProvider");
   }
   return context;
 };

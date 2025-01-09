@@ -63,8 +63,7 @@ export const createShape = ({
 
   if (shape) {
     shape.set({
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      objectType: 'shape' as any, // Use 'as any' to bypass the type checking
+      objectType: 'shape', // Use 'as any' to bypass the type checking
       id: `${type}_${Date.now()}`,
     } as Partial<CanvasObject>); // Assert this as Partial<CanvasObject>
   }

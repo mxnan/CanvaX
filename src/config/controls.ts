@@ -12,7 +12,32 @@ import {
   AlignCenter,
   Palette,
 } from "lucide-react";
-import { Control } from "@/context/canvas-context";
+
+// Add new type for control actions
+export type ControlAction = 
+  | "duplicate"
+  | "rotate"
+  | "flipHorizontal"
+  | "flipVertical"
+  | "moveForward"
+  | "moveBackward"
+  | "delete"
+  | "changeFill"
+  | "editText"
+  | "toggleAlign"
+  | "cropImage"
+  | "resetImage";
+
+// Update Control interface
+export interface Control {
+  id: string;
+  icon: React.ElementType;
+  action: ControlAction;
+  tooltip: string;
+  className?: string;
+  group: ControlGroup;
+  isActive?: boolean;
+}
 
 // Shared controls that apply to all objects
 export const sharedControls: Control[] = [
@@ -68,11 +93,6 @@ export const sharedControls: Control[] = [
   },
 ];
 
-// // Transform controls (only for shapes and images)
-// export const transformControls: Control[] = [
-
-// ];
-
 // Shape-specific controls
 export const shapeControls: Control[] = [
   {
@@ -121,19 +141,29 @@ export const imageControls: Control[] = [
 ];
 
 export const getObjectControls = (objectType: string): Control[] => {
-  // Start with shared controls for all objects
   const controls = [...sharedControls];
 
-  // Add object-specific controls based on type
-  switch (objectType) {
+  switch (objectType.toLowerCase()) {
     case "text":
-      return [...controls, ...textControls];
+      return [...controls, ...textControls].map(control => ({
+        ...control,
+        isActive: false
+      }));
     case "image":
-      return [...controls, ...imageControls];
+      return [...controls, ...imageControls].map(control => ({
+        ...control,
+        isActive: false
+      }));
     case "shape":
-      return [...controls, ...shapeControls];
+      return [...controls, ...shapeControls].map(control => ({
+        ...control,
+        isActive: false
+      }));
     default:
-      return controls;
+      return controls.map(control => ({
+        ...control,
+        isActive: false
+      }));
   }
 };
 
