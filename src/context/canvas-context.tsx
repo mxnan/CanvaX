@@ -19,9 +19,9 @@ export function CanvasProvider({ children }: CanvasProviderProps) {
   // const [position, setPosition] = useState<Position>({ top: 0, left: 0 });
   const [objectCount, setObjectCount] = useState(0);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
-  const [isCropping, setIsCropping] = useState(false);
-  const [cropObject, setCropObject] = useState<fabric.Image | null>(null);
-  const [cropArea, setCropArea] = useState<fabric.Rect | null>(null);
+  // const [isCropping, setIsCropping] = useState(false);
+  // const [cropObject, setCropObject] = useState<fabric.Image | null>(null);
+  // const [cropArea, setCropArea] = useState<fabric.Rect | null>(null);
 
   // Utility Functions
   const incrementObjectCount = useCallback(() => {
@@ -238,101 +238,102 @@ export function CanvasProvider({ children }: CanvasProviderProps) {
     [canvas]
   );
 
-  // Image Actions
-  const startCropping = useCallback(
-    (object: CanvasObject) => {
-      if (!canvas || object.type !== "image") return;
+  // // Image Actions
+  // const startCropping = useCallback(
+  //   (object: CanvasObject) => {
+  //     if (!canvas || object.type !== "image") return;
 
-      const image = object as fabric.Image;
-      const cropArea = new fabric.Rect({
-        left: image.left,
-        top: image.top,
-        width: image.width! * image.scaleX!,
-        height: image.height! * image.scaleY!,
-        fill: "transparent",
-        stroke: "#ff0000",
-        strokeWidth: 2,
-        strokeDashArray: [5, 5],
-        cornerColor: "white",
-        cornerSize: 10,
-        // Disable rotation and keep only scaling/moving
-        lockRotation: true,
-        hasRotatingPoint: false,
-        lockSkewingX: true,
-        lockSkewingY: true,
-        transparentCorners: false,
-      });
+  //     const image = object as fabric.Image;
+  //     const cropArea = new fabric.Rect({
+  //       left: image.left,
+  //       top: image.top,
+  //       width: image.width! * image.scaleX!,
+  //       height: image.height! * image.scaleY!,
+  //       fill: "#ff0000",
+  //       opacity: 0.2,
+  //       stroke: "#ff0000",
+  //       strokeWidth: 2,
+  //       strokeDashArray: [5, 5],
+  //       cornerColor: "white",
+  //       cornerSize: 10,
+  //       // Disable rotation and keep only scaling/moving
+  //       lockRotation: true,
+  //       hasRotatingPoint: false,
+  //       lockSkewingX: true,
+  //       lockSkewingY: true,
+  //       transparentCorners: false,
+  //     });
 
-      // Disable controls on the original image while cropping
-      image.selectable = false;
-      image.evented = false;
+  //     // Disable controls on the original image while cropping
+  //     image.selectable = false;
+  //     image.evented = false;
 
-      canvas.add(cropArea);
-      canvas.setActiveObject(cropArea);
-      setCropObject(image);
-      setCropArea(cropArea);
-      setIsCropping(true);
-      canvas.requestRenderAll();
-    },
-    [canvas]
-  );
+  //     canvas.add(cropArea);
+  //     canvas.setActiveObject(cropArea);
+  //     setCropObject(image);
+  //     setCropArea(cropArea);
+  //     setIsCropping(true);
+  //     canvas.requestRenderAll();
+  //   },
+  //   [canvas]
+  // );
 
-  const applyCrop = useCallback(() => {
-    if (!canvas || !cropObject || !cropArea) return;
+  // const applyCrop = useCallback(() => {
+  //   if (!canvas || !cropObject || !cropArea) return;
 
-    const imageElement = cropObject.getElement();
-    const cropBounds = cropArea.getBoundingRect();
-    const imageBounds = cropObject.getBoundingRect();
+  //   const imageElement = cropObject.getElement();
+  //   const cropBounds = cropArea.getBoundingRect();
+  //   const imageBounds = cropObject.getBoundingRect();
 
-    // Calculate the scale of the original image
-    const originalScale = cropObject.scaleX!;
+  //   // Calculate the scale of the original image
+  //   const originalScale = cropObject.scaleX!;
 
-    const tempCanvas = document.createElement("canvas");
-    const tempCtx = tempCanvas.getContext("2d")!;
-    tempCanvas.width = cropBounds.width;
-    tempCanvas.height = cropBounds.height;
+  //   const tempCanvas = document.createElement("canvas");
+  //   const tempCtx = tempCanvas.getContext("2d")!;
+  //   tempCanvas.width = cropBounds.width;
+  //   tempCanvas.height = cropBounds.height;
 
-    tempCtx.drawImage(
-      imageElement,
-      (cropBounds.left - imageBounds.left) / cropObject.scaleX!,
-      (cropBounds.top - imageBounds.top) / cropObject.scaleY!,
-      cropBounds.width / cropObject.scaleX!,
-      cropBounds.height / cropObject.scaleY!,
-      0,
-      0,
-      cropBounds.width,
-      cropBounds.height
-    );
+  //   tempCtx.drawImage(
+  //     imageElement,
+  //     (cropBounds.left - imageBounds.left) / cropObject.scaleX!,
+  //     (cropBounds.top - imageBounds.top) / cropObject.scaleY!,
+  //     cropBounds.width / cropObject.scaleX!,
+  //     cropBounds.height / cropObject.scaleY!,
+  //     0,
+  //     0,
+  //     cropBounds.width,
+  //     cropBounds.height
+  //   );
 
-    const dataUrl = tempCanvas.toDataURL(cropObject.type);
-    fabric.Image.fromURL(dataUrl, (newImage) => {
-      newImage.set({
-        left: cropBounds.left,
-        top: cropBounds.top,
-        objectType: "image",
-        id: `image_${Date.now()}`,
-        selectable: true,
-        evented: true,
-        // Maintain the original image's scale
-        scaleX: originalScale,
-        scaleY: originalScale,
-      } as Partial<Image>);
+  //   const dataUrl = tempCanvas.toDataURL(cropObject.type);
+  //   fabric.Image.fromURL(dataUrl, (newImage) => {
+  //     newImage.set({
+  //       left: cropBounds.left,
+  //       top: cropBounds.top,
+  //       objectType: "image",
+  //       id: `image_${Date.now()}`,
+  //       selectable: true,
+  //       evented: true,
+  //       // Maintain the original image's scale
+  //       scaleX: originalScale,
+  //       scaleY: originalScale,
+  //     } as Partial<Image>);
 
-      canvas.add(newImage);
-      canvas.setActiveObject(newImage);
-      incrementObjectCount();
+  //     canvas.add(newImage);
+  //     canvas.setActiveObject(newImage);
+  //     incrementObjectCount();
 
-      // Re-enable the original image controls
-      cropObject.selectable = true;
-      cropObject.evented = true;
+  //     // Re-enable the original image controls
+  //     cropObject.selectable = true;
+  //     cropObject.evented = true;
 
-      canvas.remove(cropArea);
-      setCropObject(null);
-      setCropArea(null);
-      setIsCropping(false);
-      canvas.requestRenderAll();
-    });
-  }, [canvas, cropObject, cropArea, incrementObjectCount]);
+  //     canvas.remove(cropArea);
+  //     setCropObject(null);
+  //     setCropArea(null);
+  //     setIsCropping(false);
+  //     canvas.requestRenderAll();
+  //   });
+  // }, [canvas, cropObject, cropArea, incrementObjectCount]);
 
   const value = {
     // State
@@ -341,14 +342,14 @@ export function CanvasProvider({ children }: CanvasProviderProps) {
     // position,
     objectCount,
     isDialogOpen,
-    isCropping,
-    cropObject,
+    // isCropping,
+    // cropObject,
 
     // Setters
     setCanvas,
     setSelectedObject,
     setIsDialogOpen,
-    setIsCropping,
+    // setIsCropping,
     incrementObjectCount,
 
     // Object Actions
@@ -374,8 +375,8 @@ export function CanvasProvider({ children }: CanvasProviderProps) {
     changeFillColor,
 
     // Crop Actions
-    startCropping,
-    applyCrop,
+    // startCropping,
+    // applyCrop,
 
     // Text Actions
     addText,

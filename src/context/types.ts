@@ -1,12 +1,10 @@
 import { fabric } from "fabric";
 import { ReactNode } from "react";
 
-
 export interface CanvasObject extends fabric.Object {
   id?: string;
   zIndex?: number;
   objectType?: string | "image" | "text" | "shape";
-
 }
 
 export interface CanvasContextValue {
@@ -16,7 +14,7 @@ export interface CanvasContextValue {
   // position: Position;
   objectCount: number;
   isDialogOpen: boolean;
-  isCropping: boolean;
+  // isCropping: boolean;
 
   // Canvas Actions
   setCanvas: (canvas: fabric.Canvas | null) => void;
@@ -53,14 +51,14 @@ export interface CanvasContextValue {
   changeFillColor: (object: CanvasObject, color: string) => void;
 
   // Crop Actions
-  applyCrop: () => void;
-  setIsCropping: (isCropping: boolean) => void;
+  // applyCrop: () => void;
+  // setIsCropping: (isCropping: boolean) => void;
 
   // Crop-related state
-  cropObject: fabric.Image | null;
+  // cropObject: fabric.Image | null;
 
   // Crop actions
-  startCropping: (object: CanvasObject) => void;
+  // startCropping: (object: CanvasObject) => void;
 
   addText: (text: string, options?: Partial<fabric.ITextOptions>) => void;
 }

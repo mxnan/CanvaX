@@ -2,7 +2,7 @@ import React from "react";
 import { fabric } from "fabric";
 import { useCanvas } from "@/context/canvas-context";
 import { CanvasObject } from "@/context/types";
-import CropControls from "../ui-helper/crop-controls";
+// import CropControls from "../ui-helper/crop-controls";
 
 const Canvas = () => {
   const canvasRef = React.useRef<HTMLCanvasElement>(null);
@@ -10,6 +10,20 @@ const Canvas = () => {
 
   const initCanvas = React.useCallback(() => {
     if (!canvasRef.current) return;
+    // Set default control properties for all objects
+    fabric.Object.prototype.set({
+      borderColor: "#4B9CFF",
+      borderScaleFactor: 2,
+      padding: 12,
+      borderOpacityWhenMoving: 0.3,
+      cornerStyle: "circle",
+      cornerColor: "#84cc16",
+      cornerStrokeColor: "#22c55e",
+      cornerSize: 12,
+      // transparentCorners: false,
+      // hasRotatingPoint: false,
+      // lockScalingFlip: true,
+    });
 
     const fabricCanvas = new fabric.Canvas(canvasRef.current, {
       width: window.innerWidth - 32,
@@ -98,11 +112,8 @@ const Canvas = () => {
 
   return (
     <>
-      <canvas
-        ref={canvasRef}
-        className="bg-black/10 rounded-lg shadow-xl"
-      />
-      <CropControls />
+      <canvas ref={canvasRef} className="bg-black/10 rounded-lg shadow-xl" />
+      {/* <CropControls /> */}
     </>
   );
 };
