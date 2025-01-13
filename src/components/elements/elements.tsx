@@ -1,7 +1,7 @@
 import React from "react";
 import { Button } from "@/components/ui/button";
 
-import { Image, Trash2 } from "lucide-react";
+import { Image, Trash2, Type } from "lucide-react";
 
 import { useCanvas } from "@/context/canvas-context";
 import { toast } from "sonner";
@@ -16,7 +16,8 @@ const Elements = () => {
     isDialogOpen,
     setIsDialogOpen,
     canvas,
-    objectCount
+    objectCount,
+    addText,
   } = useCanvas();
 
   const handleClearCanvas = React.useCallback(() => {
@@ -26,15 +27,29 @@ const Elements = () => {
     }
   }, [canvas, clearCanvas, objectCount]);
 
-  const handleAddImage = React.useCallback((url: string) => {
-    addImage(url);
-    toast.success("Image added");
-  }, [addImage]);
+  const handleAddImage = React.useCallback(
+    (url: string) => {
+      addImage(url);
+      toast.success("Image added");
+    },
+    [addImage]
+  );
 
-  const handleAddShape = React.useCallback((type: string) => {
-    addShape(type);
-    toast.success(`${type} shape added`);
-  }, [addShape]);
+  const handleAddShape = React.useCallback(
+    (type: string) => {
+      addShape(type);
+      toast.success(`${type} shape added`);
+    },
+    [addShape]
+  );
+
+  const handleAddText = () => {
+    const userInput = "Enter text here :";
+    if (userInput) {
+      addText(userInput);
+      toast.success("Text added");
+    }
+  };
 
   return (
     <div className="fixed top-1/2 -translate-y-1/2 left-4 z-[3]">
@@ -52,7 +67,17 @@ const Elements = () => {
             Add Image
           </span>
         </Button>
-
+        <Button
+          size="icon"
+          variant="ghost"
+          onClick={handleAddText}
+          className="relative group hover:bg-neutral-800"
+        >
+          <Type className="w-4 h-4" />
+          <span className="absolute left-full ml-2 px-2 py-1 bg-black/90 text-white text-sm rounded-md invisible group-hover:visible whitespace-nowrap backdrop-blur-sm">
+            Add Text
+          </span>
+        </Button>
         <Button
           size="icon"
           variant="ghost"

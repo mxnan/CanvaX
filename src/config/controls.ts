@@ -14,7 +14,7 @@ import {
 } from "lucide-react";
 
 // Add new type for control actions
-export type ControlAction = 
+export type ControlAction =
   | "duplicate"
   | "rotate"
   | "flipHorizontal"
@@ -107,6 +107,13 @@ export const shapeControls: Control[] = [
 // Text-specific controls
 export const textControls: Control[] = [
   {
+    id: "fill",
+    icon: Palette,
+    action: "changeFill",
+    tooltip: "Change Text Color",
+    group: "style",
+  },
+  {
     id: "align",
     icon: AlignCenter,
     action: "toggleAlign",
@@ -145,24 +152,24 @@ export const getObjectControls = (objectType: string): Control[] => {
 
   switch (objectType.toLowerCase()) {
     case "text":
-      return [...controls, ...textControls].map(control => ({
+      return [...controls, ...textControls].map((control) => ({
         ...control,
-        isActive: false
+        isActive: false,
       }));
     case "image":
-      return [...controls, ...imageControls].map(control => ({
+      return [...controls, ...imageControls].map((control) => ({
         ...control,
-        isActive: false
+        isActive: false,
       }));
     case "shape":
-      return [...controls, ...shapeControls].map(control => ({
+      return [...controls, ...shapeControls].map((control) => ({
         ...control,
-        isActive: false
+        isActive: false,
       }));
     default:
-      return controls.map(control => ({
+      return controls.map((control) => ({
         ...control,
-        isActive: false
+        isActive: false,
       }));
   }
 };

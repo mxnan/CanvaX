@@ -25,7 +25,7 @@ const ObjectControls = () => {
 
   // Debug log for component updates
   React.useEffect(() => {
-    console.log("ObjectControls selectedObject changed:", selectedObject);
+    console.log("object type:", selectedObject?.objectType);
   }, [selectedObject]);
 
   const updatePosition = React.useCallback(() => {
@@ -55,6 +55,7 @@ const ObjectControls = () => {
       "object:modified",
       "selection:created",
       "selection:updated",
+      "selection:cleared",
     ];
 
     // Initial position update
@@ -66,7 +67,6 @@ const ObjectControls = () => {
   // Update position when selected object changes
   React.useEffect(() => {
     if (selectedObject && canvas) {
-      console.log("Updating position for new selection"); // Debug log
       updatePosition();
     }
   }, [selectedObject, canvas, updatePosition]);
@@ -82,7 +82,7 @@ const ObjectControls = () => {
       "object:modified",
       "selection:created",
       "selection:updated",
-      "after:render",
+      "selection:cleared",
     ];
 
     events.forEach((event) => {
@@ -97,7 +97,7 @@ const ObjectControls = () => {
   }, [canvas, selectedObject, updatePosition]);
 
   // Debug render
-  console.log("ObjectControls render:", { selectedObject, position });
+  // console.log("ObjectControls render:", { selectedObject, position });
 
   const handleAction = React.useCallback(
     (action: ControlAction, options?: Record<string, unknown>) => {

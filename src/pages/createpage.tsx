@@ -18,7 +18,7 @@ export default function CreatePage() {
   return (
     <>
       <CanvasProvider>
-        <div className="relative bg-neutral-900 text-white overflow-hidden h-screen flex items-center justify-center">
+        <div className="relative bg-black text-white overflow-hidden h-screen flex items-center justify-center">
           <Suspense fallback={<LoadingFallback />}>
             <Elements />
             <div className="relative">

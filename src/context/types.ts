@@ -1,10 +1,12 @@
 import { fabric } from "fabric";
 import { ReactNode } from "react";
 
+
 export interface CanvasObject extends fabric.Object {
   id?: string;
   zIndex?: number;
-  objectType?: string;
+  objectType?: string | "image" | "text" | "shape";
+
 }
 
 export interface CanvasContextValue {
@@ -37,9 +39,15 @@ export interface CanvasContextValue {
 
   // Transform Actions
   rotateObject: (object: CanvasObject, angle: number) => void;
-  flipObject: (object: CanvasObject, direction: "horizontal" | "vertical") => void;
+  flipObject: (
+    object: CanvasObject,
+    direction: "horizontal" | "vertical"
+  ) => void;
   resetObjectTransform: (object: CanvasObject) => void;
-  updateObjectProperties: (object: CanvasObject, properties: Partial<CanvasObject>) => void;
+  updateObjectProperties: (
+    object: CanvasObject,
+    properties: Partial<CanvasObject>
+  ) => void;
 
   // Style Actions
   changeFillColor: (object: CanvasObject, color: string) => void;
@@ -50,9 +58,11 @@ export interface CanvasContextValue {
 
   // Crop-related state
   cropObject: fabric.Image | null;
-  
+
   // Crop actions
   startCropping: (object: CanvasObject) => void;
+
+  addText: (text: string, options?: Partial<fabric.ITextOptions>) => void;
 }
 
 export interface CanvasProviderProps {
