@@ -65,6 +65,8 @@ export function CanvasProvider({ children }: CanvasProviderProps) {
           scaleY: scale,
           objectType: "image",
           id: `image_${Date.now()}`,
+          hasRotatingPoint: true,
+          lockScalingFlip: true,
         } as Partial<Image>);
 
         canvas.add(img);

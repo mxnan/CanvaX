@@ -20,9 +20,9 @@ const Canvas = () => {
       cornerColor: "#84cc16",
       cornerStrokeColor: "#22c55e",
       cornerSize: 12,
-      // transparentCorners: false,
-      // hasRotatingPoint: false,
-      // lockScalingFlip: true,
+      transparentCorners: false,
+      hasRotatingPoint: true,
+      lockScalingFlip: true,
     });
 
     const fabricCanvas = new fabric.Canvas(canvasRef.current, {
@@ -112,7 +112,7 @@ const Canvas = () => {
 
   return (
     <>
-      <canvas ref={canvasRef} className="bg-black/10 rounded-lg shadow-xl" />
+      <canvas ref={canvasRef} className="bg-transparent rounded-lg shadow-xl" />
       {/* <CropControls /> */}
     </>
   );
