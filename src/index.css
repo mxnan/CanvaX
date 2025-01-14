@@ -67,4 +67,15 @@
   body {
     @apply bg-background text-foreground font-sans;
   }
+  .scrollbar-hide{
+  @apply overflow-hidden; /* Hide scrollbar for all browsers */
+  /* For Webkit browsers */
+  &::-webkit-scrollbar {
+    display: none; /* Hide scrollbar */
+  }
+  /* For Firefox */
+  & {
+    scrollbar-width: none; /* Hide scrollbar */
+  }
+  }
 }

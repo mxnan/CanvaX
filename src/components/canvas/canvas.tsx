@@ -1,8 +1,16 @@
-import React from "react";
+import React, { lazy } from "react";
 import { fabric } from "fabric";
 import { useCanvas } from "@/context/canvas-context";
 import { CanvasObject } from "@/context/types";
-import CropControls from "../ui-helper/crop-controls";
+import ExportImage from "../canvas-helper/export-image";
+import LayerView from "../canvas-helper/layer-view";
+import ImageFilters from "../canvas-helper/image-filters";
+// import CropControls from "../ui-helper/crop-controls";
+
+const ObjectControls = lazy(
+  () => import("@/components/canvas-helper/object-controls")
+);
+
 
 
 const Canvas = () => {
@@ -11,10 +19,24 @@ const Canvas = () => {
 
   const initCanvas = React.useCallback(() => {
     if (!canvasRef.current) return;
-    
+    // Set default control properties for all objects
+    fabric.Object.prototype.set({
+      borderColor: "#4B9CFF",
+      borderScaleFactor: 2,
+      padding: 12,
+      borderOpacityWhenMoving: 0.3,
+      cornerStyle: "circle",
+      cornerColor: "#84cc16",
+      cornerStrokeColor: "#22c55e",
+      cornerSize: 12,
+      transparentCorners: false,
+      hasRotatingPoint: true,
+      lockScalingFlip: true,
+    });
+
     const fabricCanvas = new fabric.Canvas(canvasRef.current, {
-      width: window.innerWidth - 32,
-      height: window.innerHeight - 32,
+      width: window.innerWidth ,
+      height: window.innerHeight ,
       preserveObjectStacking: true,
       selection: false,
       renderOnAddRemove: true,
@@ -22,26 +44,29 @@ const Canvas = () => {
     });
 
     fabricCanvas.setDimensions({
-      width: window.innerWidth - 32,
-      height: window.innerHeight - 32,
+      width: window.innerWidth ,
+      height: window.innerHeight ,
     });
 
     return fabricCanvas;
   }, []);
 
-  const handleObjectSelection = React.useCallback((e: fabric.IEvent) => {
-    const target = e.target as CanvasObject | undefined;
-    
-    if (!target) {
-      setSelectedObject(null);
-      return;
-    }
+  const handleObjectSelection = React.useCallback(
+    (e: fabric.IEvent) => {
+      const target = e.target as CanvasObject | undefined;
 
-    if (!target.id) target.set('id', `object_${Date.now()}`);
-    if (!target.objectType) target.set('objectType', 'shape');
+      if (!target) {
+        setSelectedObject(null);
+        return;
+      }
 
-    setSelectedObject(target);
-  }, [setSelectedObject]);
+      if (!target.id) target.set("id", `object_${Date.now()}`);
+      if (!target.objectType) target.set("objectType", "shape");
+
+      setSelectedObject(target);
+    },
+    [setSelectedObject]
+  );
 
   React.useEffect(() => {
     const canvas = initCanvas();
@@ -50,15 +75,24 @@ const Canvas = () => {
     setCanvas(canvas);
 
     const events = {
-      selection: ['selection:created', 'selection:updated', 'selection:cleared'],
-      modification: ['object:moving', 'object:scaling', 'object:rotating', 'object:modified']
+      selection: [
+        "selection:created",
+        "selection:updated",
+        "selection:cleared",
+      ],
+      modification: [
+        "object:moving",
+        "object:scaling",
+        "object:rotating",
+        "object:modified",
+      ],
     };
 
-    events.selection.forEach(eventName => {
+    events.selection.forEach((eventName) => {
       canvas.on(eventName, handleObjectSelection);
     });
 
-    events.modification.forEach(eventName => {
+    events.modification.forEach((eventName) => {
       canvas.on(eventName, (e) => {
         canvas.requestRenderAll();
         if (e.target) handleObjectSelection(e);
@@ -72,13 +106,13 @@ const Canvas = () => {
       });
       canvas.requestRenderAll();
     };
-    window.addEventListener('resize', handleResize);
+    window.addEventListener("resize", handleResize);
 
     return () => {
-      [...events.selection, ...events.modification].forEach(eventName => {
+      [...events.selection, ...events.modification].forEach((eventName) => {
         canvas.off(eventName);
       });
-      window.removeEventListener('resize', handleResize);
+      window.removeEventListener("resize", handleResize);
       canvas.dispose();
       setSelectedObject(null);
       setCanvas(null);
@@ -87,8 +121,11 @@ const Canvas = () => {
 
   return (
     <>
-      <canvas ref={canvasRef} className="bg-neutral-800/20 rounded-lg shadow-xl" />
-      <CropControls />
+      <canvas ref={canvasRef} className="bg-stone-900/10 rounded-lg shadow-xl" />
+      <ExportImage />
+      <LayerView />
+      <ObjectControls />
+      <ImageFilters />
     </>
   );
 };

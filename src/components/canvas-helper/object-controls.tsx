@@ -18,14 +18,14 @@ const ObjectControls = () => {
     rotateObject,
     flipObject,
     resetObjectTransform,
-    startCropping,
+    // startCropping,
   } = useCanvas();
 
   const [position, setPosition] = React.useState({ top: 0, left: 0 });
 
   // Debug log for component updates
   React.useEffect(() => {
-    console.log("ObjectControls selectedObject changed:", selectedObject);
+    console.log("object type:", selectedObject?.objectType);
   }, [selectedObject]);
 
   const updatePosition = React.useCallback(() => {
@@ -48,56 +48,63 @@ const ObjectControls = () => {
   React.useEffect(() => {
     if (!canvas || !selectedObject) return;
 
+    const updatePositionAndRender = () => {
+      updatePosition(); // Update position
+      canvas.requestRenderAll(); // Request a render to update controls
+    };
+
     const events = [
+      "selection:created",
+      "selection:updated",
+      "selection:cleared",
       "object:moving",
       "object:scaling",
       "object:rotating",
       "object:modified",
-      "selection:created",
-      "selection:updated",
     ];
 
     // Initial position update
-    updatePosition();
+    updatePositionAndRender();
 
-    events.forEach((event) => canvas.on(event, updatePosition));
-    return () => events.forEach((event) => canvas.off(event, updatePosition));
+    events.forEach((event) => canvas.on(event, updatePositionAndRender));
+    return () => events.forEach((event) => canvas.off(event, updatePositionAndRender));
   }, [canvas, selectedObject, updatePosition]);
-  // Update position when selected object changes
-  React.useEffect(() => {
-    if (selectedObject && canvas) {
-      console.log("Updating position for new selection"); // Debug log
-      updatePosition();
-    }
-  }, [selectedObject, canvas, updatePosition]);
 
-  // Listen to canvas events
-  React.useEffect(() => {
-    if (!canvas || !selectedObject) return;
+  // // Update position when selected object changes
+  // React.useEffect(() => {
+  //   if (selectedObject && canvas) {
+  //     updatePosition(); // Update position immediately on selection
+  //     canvas.requestRenderAll(); // Request a render to update controls
+  //   }
+  // }, [selectedObject, canvas, updatePosition]);
 
-    const events = [
-      "object:moving",
-      "object:scaling",
-      "object:rotating",
-      "object:modified",
-      "selection:created",
-      "selection:updated",
-      "after:render",
-    ];
+  // // Listen to canvas events
+  // React.useEffect(() => {
+  //   if (!canvas || !selectedObject) return;
 
-    events.forEach((event) => {
-      canvas.on(event, updatePosition);
-    });
+  //   const events = [
+  //     "object:moving",
+  //     "object:scaling",
+  //     "object:rotating",
+  //     "object:modified",
+  //     "selection:created",
+  //     "selection:updated",
+  //     "selection:cleared",
+  //   ];
 
-    return () => {
-      events.forEach((event) => {
-        canvas.off(event, updatePosition);
-      });
-    };
-  }, [canvas, selectedObject, updatePosition]);
+  //   events.forEach((event) => {
+  //     canvas.on(event, updatePosition);
+  //   });
+
+  //   return () => {
+  //     events.forEach((event) => {
+  //       canvas.off(event, updatePosition);
+  //     });
+  //   };
+  // }, [canvas, selectedObject, updatePosition]);
 
   // Debug render
-  console.log("ObjectControls render:", { selectedObject, position });
+  // console.log("ObjectControls render:", { selectedObject, position });
 
   const handleAction = React.useCallback(
     (action: ControlAction, options?: Record<string, unknown>) => {
@@ -134,11 +141,11 @@ const ObjectControls = () => {
           case "resetImage":
             resetObjectTransform(selectedObject);
             break;
-          case "cropImage":
-            if (selectedObject.objectType === "image") {
-              startCropping(selectedObject);
-            }
-            break;
+          // case "cropImage":
+          //   if (selectedObject.objectType === "image") {
+          //     // startCropping(selectedObject);
+          //   }
+          //   break;
         }
       } catch (error) {
         console.error(`Error handling action ${action}:`, error);
@@ -155,26 +162,26 @@ const ObjectControls = () => {
       rotateObject,
       flipObject,
       resetObjectTransform,
-      startCropping,
+      // startCropping,
     ]
   );
 
   if (!selectedObject || !canvas) {
-    console.log("ObjectControls not rendering - no selection or canvas");
+   
     return null;
   }
 
   const controls = getObjectControls(selectedObject.objectType || "shape");
 
   return (
-    <AnimatePresence mode="wait">
+    <AnimatePresence mode="popLayout">
       <motion.div
         key={selectedObject.id} // Add key for proper animation
         initial={{ opacity: 0, y: -10 }}
         animate={{ opacity: 1, y: 0 }}
         exit={{ opacity: 0, y: -10 }}
         transition={{ duration: 0.3 }}
-        className="fixed z-[9999] pointer-events-auto"
+        className="fixed z-[999] pointer-events-auto"
         style={{
           top: position.top - 90,
           left: position.left,
