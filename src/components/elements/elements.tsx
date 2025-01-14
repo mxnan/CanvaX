@@ -52,7 +52,7 @@ const Elements = () => {
   };
 
   return (
-    <div className="fixed top-1/2 -translate-y-1/2 left-4 z-[3]">
+    <div className="fixed top-1/2 -translate-y-1/2 left-4 z-[999]">
       <div className="flex flex-col bg-neutral-900/90 backdrop-blur-sm p-2 rounded-xl gap-3 border border-neutral-800">
         <ShapesPopover onShapeAdd={handleAddShape} />
 

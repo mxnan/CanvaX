@@ -1,8 +1,16 @@
-import React from "react";
+import React, { lazy } from "react";
 import { fabric } from "fabric";
 import { useCanvas } from "@/context/canvas-context";
 import { CanvasObject } from "@/context/types";
+import ExportImage from "../canvas-helper/export-image";
+import LayerView from "../canvas-helper/layer-view";
 // import CropControls from "../ui-helper/crop-controls";
+
+const ObjectControls = lazy(
+  () => import("@/components/canvas-helper/object-controls")
+);
+
+
 
 const Canvas = () => {
   const canvasRef = React.useRef<HTMLCanvasElement>(null);
@@ -26,8 +34,8 @@ const Canvas = () => {
     });
 
     const fabricCanvas = new fabric.Canvas(canvasRef.current, {
-      width: window.innerWidth - 32,
-      height: window.innerHeight - 32,
+      width: window.innerWidth ,
+      height: window.innerHeight ,
       preserveObjectStacking: true,
       selection: false,
       renderOnAddRemove: true,
@@ -35,8 +43,8 @@ const Canvas = () => {
     });
 
     fabricCanvas.setDimensions({
-      width: window.innerWidth - 32,
-      height: window.innerHeight - 32,
+      width: window.innerWidth ,
+      height: window.innerHeight ,
     });
 
     return fabricCanvas;
@@ -112,8 +120,10 @@ const Canvas = () => {
 
   return (
     <>
-      <canvas ref={canvasRef} className="bg-transparent rounded-lg shadow-xl" />
-      {/* <CropControls /> */}
+      <canvas ref={canvasRef} className="bg-stone-900/10 rounded-lg shadow-xl" />
+      <ExportImage />
+      <LayerView />
+      <ObjectControls />
     </>
   );
 };

@@ -57,12 +57,12 @@ export function CanvasProvider({ children }: CanvasProviderProps) {
       if (!canvas) return;
 
       fabric.Image.fromURL(url, (img) => {
-        const maxSize = 300;
-        const scale = Math.min(maxSize / img.width!, maxSize / img.height!);
+        // const maxSize = 300;
+        // const scale = Math.min(maxSize / img.width!, maxSize / img.height!);
 
         img.set({
-          scaleX: scale,
-          scaleY: scale,
+          // scaleX: scale,
+          // scaleY: scale,
           objectType: "image",
           id: `image_${Date.now()}`,
           hasRotatingPoint: true,

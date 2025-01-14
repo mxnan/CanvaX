@@ -3,9 +3,7 @@ import { lazy, Suspense } from "react";
 
 // Lazy load components
 const Elements = lazy(() => import("@/components/elements/elements"));
-const ObjectControls = lazy(
-  () => import("@/components/canvas-helper/object-controls")
-);
+
 const Canvas = lazy(() => import("@/components/canvas/canvas"));
 
 const LoadingFallback = () => (
@@ -23,7 +21,7 @@ export default function CreatePage() {
             <Elements />
             <div className="relative">
               <Canvas />
-              <ObjectControls />
+              
             </div>
           </Suspense>
         </div>{" "}
