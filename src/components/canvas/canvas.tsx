@@ -4,6 +4,7 @@ import { useCanvas } from "@/context/canvas-context";
 import { CanvasObject } from "@/context/types";
 import ExportImage from "../canvas-helper/export-image";
 import LayerView from "../canvas-helper/layer-view";
+import ImageFilters from "../canvas-helper/image-filters";
 // import CropControls from "../ui-helper/crop-controls";
 
 const ObjectControls = lazy(
@@ -124,6 +125,7 @@ const Canvas = () => {
       <ExportImage />
       <LayerView />
       <ObjectControls />
+      <ImageFilters />
     </>
   );
 };
