@@ -171,6 +171,7 @@ export function CanvasProvider({ children }: CanvasProviderProps) {
   const clearCanvas = useCallback(() => {
     if (!canvas) return;
     canvas.clear();
+    setObjectCount(0);
     setSelectedObject(null);
   }, [canvas]);
 
@@ -357,6 +358,7 @@ export function CanvasProvider({ children }: CanvasProviderProps) {
     // Object Actions
     addShape,
     addImage,
+    addText,
     deleteObject,
     duplicateObject,
     clearCanvas,
@@ -381,7 +383,7 @@ export function CanvasProvider({ children }: CanvasProviderProps) {
     // applyCrop,
 
     // Text Actions
-    addText,
+   
   };
 
   return (
