@@ -181,7 +181,7 @@ const ObjectControls = () => {
         animate={{ opacity: 1, y: 0 }}
         exit={{ opacity: 0, y: -10 }}
         transition={{ duration: 0.3 }}
-        className="fixed z-[9999] pointer-events-auto"
+        className="fixed z-[999] pointer-events-auto"
         style={{
           top: position.top - 90,
           left: position.left,

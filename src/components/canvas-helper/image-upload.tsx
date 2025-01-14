@@ -33,7 +33,7 @@ const ImageUpload = ({
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="sm:max-w-md">
+      <DialogContent className="sm:max-w-md z-[999]">
         <DialogHeader>
           <DialogTitle>Add Image</DialogTitle>
           <DialogDescription>Upload an image or paste a URL</DialogDescription>
