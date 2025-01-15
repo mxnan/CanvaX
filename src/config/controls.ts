@@ -9,7 +9,6 @@ import {
   Type,
   ImageOff,
   Crop,
-  AlignCenter,
   Palette,
 } from "lucide-react";
 
@@ -112,13 +111,6 @@ export const textControls: Control[] = [
     action: "changeFill",
     tooltip: "Change Text Color",
     group: "style",
-  },
-  {
-    id: "align",
-    icon: AlignCenter,
-    action: "toggleAlign",
-    tooltip: "Text Alignment",
-    group: "text",
   },
   {
     id: "edit",

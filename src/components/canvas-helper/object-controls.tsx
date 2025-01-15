@@ -5,6 +5,7 @@ import { useCanvas } from "@/context/canvas-context";
 import { ControlAction } from "@/config/controls";
 import ColorPicker from "../ui-helper/color-picker";
 import ControlButton from "../ui-helper/control-button";
+import TextOptions from "./text-options";
 
 const ObjectControls = () => {
   const {
@@ -67,7 +68,8 @@ const ObjectControls = () => {
     updatePositionAndRender();
 
     events.forEach((event) => canvas.on(event, updatePositionAndRender));
-    return () => events.forEach((event) => canvas.off(event, updatePositionAndRender));
+    return () =>
+      events.forEach((event) => canvas.off(event, updatePositionAndRender));
   }, [canvas, selectedObject, updatePosition]);
 
   // // Update position when selected object changes
@@ -141,6 +143,39 @@ const ObjectControls = () => {
           case "resetImage":
             resetObjectTransform(selectedObject);
             break;
+          case "editText":
+            if (options?.option && options?.value) {
+              const textObject = selectedObject as fabric.IText;
+              const { option, value } = options as {
+                option: string;
+                value: number | string | boolean;
+              };
+              switch (option) {
+                case "fontSize":
+                  textObject.set("fontSize", value as number);
+                  break;
+                case "fontFamily":
+                  textObject.set("fontFamily", value as string);
+                  break;
+                case "textAlign":
+                  textObject.set("textAlign", value as string);
+                  break;
+                case "fontWeight":
+                  textObject.set("fontWeight", value as string);
+                  break;
+                case "fontStyle":
+                  textObject.set(
+                    "fontStyle",
+                    value as "" | "normal" | "italic" | "oblique" | undefined
+                  );
+                  break;
+                case "underline":
+                  textObject.set("underline", value as boolean);
+                  break;
+              }
+              canvas.requestRenderAll();
+            }
+            break;
           // case "cropImage":
           //   if (selectedObject.objectType === "image") {
           //     // startCropping(selectedObject);
@@ -167,7 +202,6 @@ const ObjectControls = () => {
   );
 
   if (!selectedObject || !canvas) {
-   
     return null;
   }
 
@@ -208,6 +242,18 @@ const ObjectControls = () => {
                         onColorChange={(color: string) =>
                           handleAction("changeFill", { color })
                         }
+                      />
+                    );
+                  }
+                  if (control.action === "editText") {
+                    return (
+                      <TextOptions
+                        key={control.id}
+                        control={control}
+                        onTextOptionChange={(
+                          option: string,
+                          value: string | number | boolean
+                        ) => handleAction("editText", { option, value })}
                       />
                     );
                   }
