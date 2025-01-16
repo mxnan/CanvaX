@@ -11,6 +11,8 @@ import {
   AlignLeft,
   AlignRight,
   Italic,
+  MoveHorizontal,
+  MoveVertical,
   // Underline,
 } from "lucide-react";
 import { useState } from "react";
@@ -26,7 +28,8 @@ interface TextOptionsProps {
 const TextOptions = ({ control, onTextOptionChange }: TextOptionsProps) => {
   const [fontWeight, setFontWeight] = useState("500");
   const [isItalic, setIsItalic] = useState(false);
-  // const [isUnderlined, setIsUnderlined] = useState(false);
+  const [skewX, setSkewX] = useState(0);
+  const [skewY, setSkewY] = useState(0);
 
   const fontSizes = [12, 14, 16, 18, 20, 24, 28, 32, 36, 40];
   const fontFamilies = [
@@ -52,6 +55,16 @@ const TextOptions = ({ control, onTextOptionChange }: TextOptionsProps) => {
   //   setIsUnderlined((prev) => !prev);
   //   onTextOptionChange("underline", isUnderlined ? "underline" : "");
   // };
+
+  const handleSkewChange = (axis: 'x' | 'y', value: number) => {
+    if (axis === 'x') {
+      setSkewX(value);
+      onTextOptionChange("skewX", value);
+    } else {
+      setSkewY(value);
+      onTextOptionChange("skewY", value);
+    }
+  };
 
   return (
     <Popover>
@@ -129,6 +142,34 @@ const TextOptions = ({ control, onTextOptionChange }: TextOptionsProps) => {
             >
               <Underline className="w-4 h-4" />
             </Button> */}
+          </div>
+
+          {/* Skew Controls */}
+          <div className="space-y-2">
+            <div className="flex items-center gap-2">
+              <MoveHorizontal className="w-4 h-4" />
+              <input
+                type="range"
+                min="-45"
+                max="45"
+                value={skewX}
+                className="flex-1 h-2 bg-neutral-800 rounded-lg appearance-none cursor-pointer"
+                onChange={(e) => handleSkewChange('x', parseInt(e.target.value))}
+              />
+              <span className="text-xs w-8 text-right">{skewX}°</span>
+            </div>
+            <div className="flex items-center gap-2">
+              <MoveVertical className="w-4 h-4" />
+              <input
+                type="range"
+                min="-45"
+                max="45"
+                value={skewY}
+                className="flex-1 h-2 bg-neutral-800 rounded-lg appearance-none cursor-pointer"
+                onChange={(e) => handleSkewChange('y', parseInt(e.target.value))}
+              />
+              <span className="text-xs w-8 text-right">{skewY}°</span>
+            </div>
           </div>
 
           {/* Font Weight Options */}

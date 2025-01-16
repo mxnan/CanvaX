@@ -172,6 +172,12 @@ const ObjectControls = () => {
                 case "underline":
                   textObject.set("underline", value as boolean);
                   break;
+                case "skewX":
+                  textObject.set("skewX", value as number);
+                  break;
+                case "skewY":
+                  textObject.set("skewY", value as number);
+                  break;
               }
               canvas.requestRenderAll();
             }
