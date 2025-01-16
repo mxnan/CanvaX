@@ -25,7 +25,8 @@ export type ControlAction =
   | "editText"
   | "toggleAlign"
   | "cropImage"
-  | "resetImage";
+  | "resetImage"
+  | "removeBG";
 
 // Update Control interface
 export interface Control {
@@ -135,6 +136,13 @@ export const imageControls: Control[] = [
     icon: ImageOff,
     action: "resetImage",
     tooltip: "Reset Image",
+    group: "image",
+  },
+  {
+    id: "removeBG",
+    icon: ImageOff,
+    action: "removeBG",
+    tooltip: "Remove background",
     group: "image",
   },
 ];

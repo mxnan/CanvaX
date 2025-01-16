@@ -7,6 +7,7 @@ import {
 } from "./types";
 import { createShape } from "@/lib/shapes";
 import { Image } from "fabric/fabric-impl";
+import { removeBackground } from '@imgly/background-removal';
 
 const CanvasContext = createContext<CanvasContextValue | undefined>(undefined);
 
@@ -242,6 +243,59 @@ export function CanvasProvider({ children }: CanvasProviderProps) {
   );
 
   // // Image Actions
+  const backgroundRemover = useCallback(
+    async (object: CanvasObject) => {
+      if (!canvas || object.objectType !== "image") return;
+
+      try {
+        // Get the image element from the fabric object
+        const imageElement = (object as fabric.Image).getElement() as HTMLImageElement;
+
+        // Log the image element to ensure it's valid
+        console.log("Image Element:", imageElement);
+
+        // Get the image URL from the image element
+        const imageUrl = imageElement.src;
+
+        // Remove background using the image URL directly
+        const resultBlob = await removeBackground(imageUrl);
+
+        // Log the result to see what is returned
+        console.log("Background Removal Result:", resultBlob);
+
+        // Convert blob to URL
+        const url = URL.createObjectURL(resultBlob);
+
+        // Create new fabric image with removed background
+        fabric.Image.fromURL(url, (newImage) => {
+          newImage.set({
+            left: object.left! + 20, // Offset slightly
+            top: object.top! + 20,
+            objectType: "image",
+            id: `image_${Date.now()}`,
+            scaleX: object.scaleX,
+            scaleY: object.scaleY,
+            angle: object.angle,
+            hasRotatingPoint: true,
+            lockScalingFlip: true,
+          } as Partial<fabric.Image>);
+
+          canvas.add(newImage);
+          canvas.setActiveObject(newImage);
+          canvas.requestRenderAll();
+          incrementObjectCount();
+
+          // Clean up the temporary URL
+          URL.revokeObjectURL(url);
+        });
+
+      } catch (error) {
+        console.error('Error removing background:', error);
+        throw error; // Rethrow to handle in the UI
+      }
+    },
+    [canvas, incrementObjectCount]
+  );
   // const startCropping = useCallback(
   //   (object: CanvasObject) => {
   //     if (!canvas || object.type !== "image") return;
@@ -381,6 +435,7 @@ export function CanvasProvider({ children }: CanvasProviderProps) {
     // Crop Actions
     // startCropping,
     // applyCrop,
+    backgroundRemover,
 
     // Text Actions
    

@@ -61,6 +61,8 @@ export interface CanvasContextValue {
   // startCropping: (object: CanvasObject) => void;
 
   addText: (text: string, options?: Partial<fabric.ITextOptions>) => void;
+
+  backgroundRemover: (object: CanvasObject) => Promise<void>;
 }
 
 export interface CanvasProviderProps {

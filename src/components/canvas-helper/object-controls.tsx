@@ -6,6 +6,7 @@ import { ControlAction } from "@/config/controls";
 import ColorPicker from "../ui-helper/color-picker";
 import ControlButton from "../ui-helper/control-button";
 import TextOptions from "./text-options";
+import { Loader2 } from "lucide-react";
 
 const ObjectControls = () => {
   const {
@@ -19,10 +20,12 @@ const ObjectControls = () => {
     rotateObject,
     flipObject,
     resetObjectTransform,
+    backgroundRemover,
     // startCropping,
   } = useCanvas();
 
   const [position, setPosition] = React.useState({ top: 0, left: 0 });
+  const [isRemoving, setIsRemoving] = React.useState(false);
 
   // Debug log for component updates
   React.useEffect(() => {
@@ -109,8 +112,11 @@ const ObjectControls = () => {
   // console.log("ObjectControls render:", { selectedObject, position });
 
   const handleAction = React.useCallback(
-    (action: ControlAction, options?: Record<string, unknown>) => {
+    async (action: ControlAction, options?: Record<string, unknown>) => {
       if (!selectedObject || !canvas) return;
+
+      console.log("Handling Action:", action, "with options:", options);
+      console.log("Selected Object:", selectedObject);
 
       try {
         switch (action) {
@@ -182,6 +188,16 @@ const ObjectControls = () => {
               canvas.requestRenderAll();
             }
             break;
+          case "removeBG":
+            if (selectedObject.objectType === "image") {
+              setIsRemoving(true);
+              try {
+                await backgroundRemover(selectedObject);
+              } finally {
+                setIsRemoving(false);
+              }
+            }
+            break;
           // case "cropImage":
           //   if (selectedObject.objectType === "image") {
           //     // startCropping(selectedObject);
@@ -190,6 +206,7 @@ const ObjectControls = () => {
         }
       } catch (error) {
         console.error(`Error handling action ${action}:`, error);
+        setIsRemoving(false);
       }
     },
     [
@@ -203,6 +220,7 @@ const ObjectControls = () => {
       rotateObject,
       flipObject,
       resetObjectTransform,
+      backgroundRemover,
       // startCropping,
     ]
   );
@@ -260,6 +278,20 @@ const ObjectControls = () => {
                           option: string,
                           value: string | number | boolean
                         ) => handleAction("editText", { option, value })}
+                      />
+                    );
+                  }
+                  if (control.action === "removeBG") {
+                    return (
+                      <ControlButton
+                        key={control.id}
+                        control={{
+                          ...control,
+                          icon: isRemoving ? Loader2 : control.icon,
+                          // disabled: isRemoving,
+                        }}
+                        onClick={() => handleAction("removeBG")}
+                        // className={isRemoving ? "animate-spin" : ""}
                       />
                     );
                   }
